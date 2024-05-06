@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">TFG</string>
-    <string name="texto_alquilado">Alquilado:</string>
-    <string name="texto_boton_guardar">Guardar</string>
-    <string name="label_alquilado">Alquilado:</string>
     <string name="introduzca_informacion_del_inmueble">Introduzca Informacion del Inmueble</string>
     <string name="ingrese_la_ciudad">Ingrese la Ciudad</string>
     <string name="guardar">Guardar</string>

@@ -8,17 +8,11 @@ class FirebaseRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val inmueblesCollection = firestore.collection("inmuebles")
 
-    fun agregarInmueble(
-        inmueble: Inmueble,
-        onSuccess: () -> Unit = {},
-        onFailure: (Exception) -> Unit = {}
-    ) {
-        inmueblesCollection.add(inmueble)
-            .addOnSuccessListener { _ ->
-                onSuccess()
-            }
-            .addOnFailureListener { e ->
-                onFailure(e)
-            }
+    fun agregarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        inmueblesCollection.add(inmueble).addOnSuccessListener {
+            onSuccess()
+        }.addOnFailureListener { e ->
+            onFailure(e)
+        }
     }
 }
