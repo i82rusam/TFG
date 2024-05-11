@@ -1,22 +1,21 @@
 package com.example.tfg.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.core.view.View
 
 class AgregarInmuebleActivity : AppCompatActivity() {
 
@@ -36,33 +35,21 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         }
     }
 
+
     companion object {
         private const val REQUEST_READ_STORAGE = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("AgregarInmuebleActivity", "onCreate llamado")
-
         setContentView(R.layout.activity_agregar_inmueble)
+        Log.d("agregarInmuebleActivity", "Función botón llamada1")
 
         repository = FirebaseRepository()
         auth = FirebaseAuth.getInstance()
-        idAleatorio = View.generateViewId()
-        findViewById<EditText>(R.id.editTextAlquilado).id = idAleatorio
-
-        val btnGuardar = findViewById<Button>(R.id.btnGuardar)
-        btnGuardar.setOnClickListener {
-            guardarInmueble()
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_STORAGE)
-        }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun cargarDocumento(view: View) {
+    fun cargarDocumento(@SuppressLint("RestrictedApi") view: View) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             documentResultLauncher.launch("*/*")
         } else {
@@ -70,7 +57,7 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         }
     }
 
-    private fun guardarInmueble() {
+    fun guardarInmueble() {
         Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
 
         val alquilado = findViewById<EditText>(R.id.editTextAlquilado).text.toString().toIntOrNull() ?: 0
@@ -81,6 +68,9 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         Log.d("AgregarInmuebleActivity", "Datos recogidos: alquilado=$alquilado, ciudad=$ciudad, nombre=$nombre, ubicacion=$ubicacion")
 
         val usuarioActual = auth.currentUser?.displayName ?: "Nombre de usuario predeterminado"
+
+        val documentUriString = documentUri?.toString() ?: ""
+        val imageUriString = imageUri?.toString() ?: ""
 
         val inmueble = Inmueble(alquilado, ciudad, documentUri.toString(), idAleatorio.toString(), imageUri.toString(), nombre, ubicacion, usuarioActual)
 
