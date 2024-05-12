@@ -19,17 +19,11 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         // Inicialización del botón guardar
-        val btnIniciar: Button = findViewById(R.id.btnGuardar)
+        val btnGuardar: Button = findViewById(R.id.btnGuardar)
         Log.d("agregarInmuebleActivity", "Función botón MainActivity")
 
-        // Establecer un Listener para el evento de clic del botón guardar
-        btnIniciar.setOnClickListener() {
-            Log.d("MainActivity", "btnIniciar onClickListener llamado")
-
-            val intent = Intent(this, AgregarInmuebleActivity::class.java)
-            startActivity(intent)
-        }
-
+        val intent = Intent(this, AgregarInmuebleActivity::class.java)
+        startActivity(intent)
 
     }
 }
