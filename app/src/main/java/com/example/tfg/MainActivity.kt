@@ -1,5 +1,6 @@
 package com.example.tfg
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -10,11 +11,7 @@ import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        val aggInmueble= AgregarInmuebleActivity()
-        Log.d("MainActivity", "Función main llamada1")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agregar_inmueble)
 
@@ -22,13 +19,15 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         // Inicialización del botón guardar
-        val btnGuardar: Button = findViewById(R.id.btnGuardar)
-        Log.d("agregarInmuebleActivity", "Función botón llamada2")
+        val btnIniciar: Button = findViewById(R.id.btnGuardar)
+        Log.d("agregarInmuebleActivity", "Función botón MainActivity")
 
         // Establecer un Listener para el evento de clic del botón guardar
-        btnGuardar.setOnClickListener() {
+        btnIniciar.setOnClickListener() {
+            Log.d("MainActivity", "btnIniciar onClickListener llamado")
 
-            aggInmueble.guardarInmueble()
+            val intent = Intent(this, AgregarInmuebleActivity::class.java)
+            startActivity(intent)
         }
 
 

@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,7 +17,6 @@ import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.core.view.View
 
 class AgregarInmuebleActivity : AppCompatActivity() {
 
@@ -35,7 +36,6 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         }
     }
 
-
     companion object {
         private const val REQUEST_READ_STORAGE = 100
     }
@@ -45,19 +45,17 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_agregar_inmueble)
         Log.d("agregarInmuebleActivity", "Función botón llamada1")
 
-        repository = FirebaseRepository()
+        repository = FirebaseRepository(this)
         auth = FirebaseAuth.getInstance()
-    }
 
-    fun cargarDocumento(@SuppressLint("RestrictedApi") view: View) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            documentResultLauncher.launch("*/*")
-        } else {
-            Toast.makeText(this, "Permiso de lectura no concedido", Toast.LENGTH_SHORT).show()
+        val btnGuardar: Button = findViewById(R.id.btnGuardar)
+        btnGuardar.setOnClickListener { view ->
+            Log.d("AgregarInmuebleActivity", "btnGuardar onClickListener llamado")
+            guardarInmueble(view)
         }
     }
 
-    fun guardarInmueble() {
+    fun guardarInmueble(view: View) {
         Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
 
         val alquilado = findViewById<EditText>(R.id.editTextAlquilado).text.toString().toIntOrNull() ?: 0
@@ -85,6 +83,13 @@ class AgregarInmuebleActivity : AppCompatActivity() {
             }
         )
     }
+        fun cargarDocumento(@SuppressLint("RestrictedApi") view: View) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                documentResultLauncher.launch("*/*")
+            } else {
+                Toast.makeText(this, "Permiso de lectura no concedido", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
