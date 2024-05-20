@@ -1,12 +1,12 @@
 package com.example.tfg.models
 
 data class Inmueble(
-    val alquilado: Int,
-    val ciudad: String,
-    val escritura: String,
-    val idInmueble: String,
-    val imagen: String,
-    val nombre: String,
-    val ubicacion: String,
-    val usuario: String
+    var alquilado: Int=0,
+    var ciudad: String="",
+    var escritura: String="",
+    var idInmueble: String="",
+    var imagen: String="",
+    var nombre: String="",
+    var ubicacion: String="",
+    var usuario: String=""
 )
