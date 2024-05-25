@@ -1,5 +1,6 @@
 package com.example.tfg.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,9 +29,16 @@ class TusInmueblesActivity : AppCompatActivity() {
         // Inicializar el repositorio de Firebase
         repository = FirebaseRepository(this)
 
-        // Configurar el Adapter
-        adapter = InmuebleAdapter(emptyList())
-        recyclerView.adapter = adapter
+        repository.getInmuebles(onSuccess = { inmuebles ->
+            adapter = InmuebleAdapter(inmuebles) { inmueble ->
+                val intent = Intent(this, InmuebleDetailActivity::class.java)
+                intent.putExtra("inmueble", inmueble)
+                startActivity(intent)
+            }
+            recyclerView.adapter = adapter
+        }, onFailure = { e ->
+            // Manejar error
+        })
 
         // Cargar los inmuebles desde Firebase
         cargarInmuebles()

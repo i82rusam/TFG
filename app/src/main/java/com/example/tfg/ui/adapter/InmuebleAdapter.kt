@@ -1,6 +1,5 @@
 package com.example.tfg.ui
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,48 +8,34 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
 import com.example.tfg.models.Inmueble
 
-class InmuebleAdapter(private var inmuebles: List<Inmueble>) :
-    RecyclerView.Adapter<InmuebleAdapter.InmuebleViewHolder>() {
+class InmuebleAdapter(
+    private val inmuebles: List<Inmueble>,
+    private val onItemClick: (Inmueble) -> Unit
+) : RecyclerView.Adapter<InmuebleAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InmuebleViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_inmueble, parent, false)
-        return InmuebleViewHolder(view)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textViewNombre: TextView = view.findViewById(R.id.textViewNombre)
+        val textViewCiudad: TextView = view.findViewById(R.id.textViewCiudad)
+        val textViewUbicacion: TextView = view.findViewById(R.id.textViewUbicacion)
     }
 
-    override fun onBindViewHolder(holder: InmuebleViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_inmueble, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val inmueble = inmuebles[position]
-        holder.bind(inmueble)
-    }
+        holder.textViewNombre.text = inmueble.nombre
+        holder.textViewCiudad.text = inmueble.ciudad
+        holder.textViewUbicacion.text = inmueble.ubicacion
 
-    override fun getItemCount(): Int {
-        return inmuebles.size
-    }
-
-    fun setInmuebles(inmuebles: List<Inmueble>) {
-        this.inmuebles = inmuebles
-        notifyDataSetChanged()
-    }
-
-    inner class InmuebleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val textViewNombre: TextView = itemView.findViewById(R.id.textViewNombre)
-        private val textViewCiudad: TextView = itemView.findViewById(R.id.textViewCiudad)
-
-        fun bind(inmueble: Inmueble) {
-            textViewNombre.text = inmueble.nombre
-            textViewCiudad.text = inmueble.ciudad
-
-            itemView.setOnClickListener {
-                val intent = Intent(itemView.context, InmuebleDetailActivity::class.java).apply {
-                    putExtra("nombre", inmueble.nombre)
-                    putExtra("ciudad", inmueble.ciudad)
-                    putExtra("alquilado", inmueble.alquilado)
-                    putExtra("ubicacion", inmueble.ubicacion)
-                    putExtra("documento", inmueble.escritura)
-                    putExtra("imagen", inmueble.imagen)
-                    putExtra("usuario", inmueble.usuario)
-                }
-                itemView.context.startActivity(intent)
-            }
+        holder.itemView.setOnClickListener {
+            onItemClick(inmueble)
         }
     }
+
+    override fun getItemCount() = inmuebles.size
+
 }
