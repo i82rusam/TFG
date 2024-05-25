@@ -1,10 +1,9 @@
 package com.example.tfg.data
+
 import android.content.Context
-import android.util.Log
 import com.example.tfg.models.Inmueble
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
 
 class FirebaseRepository(private val context: Context) {
 
@@ -13,7 +12,6 @@ class FirebaseRepository(private val context: Context) {
     val auth = FirebaseAuth.getInstance()
 
     fun agregarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        Log.d("FirebaseRepository", "Agregando inmueble: $inmueble")
         inmueblesCollection.add(inmueble).addOnSuccessListener {
             onSuccess()
         }.addOnFailureListener { e ->
@@ -21,7 +19,12 @@ class FirebaseRepository(private val context: Context) {
         }
     }
 
-    fun listarInmuebles(): LiveData<List<Inmueble>> {
-        return inmuebleDao.listarInmuebles()
+    fun getInmuebles(onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
+        inmueblesCollection.get().addOnSuccessListener { result ->
+            val inmuebles = result.toObjects(Inmueble::class.java)
+            onSuccess(inmuebles)
+        }.addOnFailureListener { e ->
+            onFailure(e)
+        }
     }
 }

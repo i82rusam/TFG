@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewNombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre del Inmueble"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewCiudad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ciudad" />
+
+    <TextView
+        android:id="@+id/textViewAlquilado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alquilado" />
+
+    <TextView
+        android:id="@+id/textViewUbicacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ubicación" />
+
+    <TextView
+        android:id="@+id/textViewDocumento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Documento" />
+
+    <TextView
+        android:id="@+id/textViewImagen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Imagen" />
+
+    <TextView
+        android:id="@+id/textViewUsuario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Usuario" />
+</LinearLayout>
