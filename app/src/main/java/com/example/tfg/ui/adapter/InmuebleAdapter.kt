@@ -9,9 +9,14 @@ import com.example.tfg.R
 import com.example.tfg.models.Inmueble
 
 class InmuebleAdapter(
-    private val inmuebles: List<Inmueble>,
+    private var inmuebles: List<Inmueble>,
     private val onItemClick: (Inmueble) -> Unit
 ) : RecyclerView.Adapter<InmuebleAdapter.ViewHolder>() {
+
+    fun setInmuebles(newInmuebles: List<Inmueble>) {
+        inmuebles = newInmuebles
+        notifyDataSetChanged()
+    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewNombre: TextView = view.findViewById(R.id.textViewNombre)

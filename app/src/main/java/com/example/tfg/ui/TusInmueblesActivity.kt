@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
+import com.example.tfg.models.Inmueble
 
 class TusInmueblesActivity : AppCompatActivity() {
 
@@ -26,22 +27,23 @@ class TusInmueblesActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewInmuebles)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Inicializar el adaptador de inmuebles
+        adapter = InmuebleAdapter(emptyList()) { inmueble ->
+            mostrarDetalleInmueble(inmueble)
+        }
+        recyclerView.adapter = adapter
+
         // Inicializar el repositorio de Firebase
         repository = FirebaseRepository(this)
 
-        repository.getInmuebles(onSuccess = { inmuebles ->
-            adapter = InmuebleAdapter(inmuebles) { inmueble ->
-                val intent = Intent(this, InmuebleDetailActivity::class.java)
-                intent.putExtra("inmueble", inmueble)
-                startActivity(intent)
-            }
-            recyclerView.adapter = adapter
-        }, onFailure = { e ->
-            // Manejar error
-        })
-
         // Cargar los inmuebles desde Firebase
         cargarInmuebles()
+    }
+
+    private fun mostrarDetalleInmueble(inmueble: Inmueble) {
+        val intent = Intent(this, InmuebleDetailActivity::class.java)
+        intent.putExtra("inmueble", inmueble)
+        startActivity(intent)
     }
 
     private fun cargarInmuebles() {
