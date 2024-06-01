@@ -1,5 +1,6 @@
 package com.example.tfg.ui
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,21 +8,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
 import com.example.tfg.models.Inmueble
+import com.example.tfg.ui.InmuebleDetailActivity
 
 class InmuebleAdapter(
     private var inmuebles: List<Inmueble>,
-    private val onItemClick: (Inmueble) -> Unit
+    private val itemClick: (Inmueble) -> Unit
 ) : RecyclerView.Adapter<InmuebleAdapter.ViewHolder>() {
 
-    fun setInmuebles(newInmuebles: List<Inmueble>) {
-        inmuebles = newInmuebles
-        notifyDataSetChanged()
-    }
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewNombre: TextView = view.findViewById(R.id.textViewNombre)
         val textViewCiudad: TextView = view.findViewById(R.id.textViewCiudad)
-        val textViewUbicacion: TextView = view.findViewById(R.id.textViewUbicacion)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,13 +30,17 @@ class InmuebleAdapter(
         val inmueble = inmuebles[position]
         holder.textViewNombre.text = inmueble.nombre
         holder.textViewCiudad.text = inmueble.ciudad
-        holder.textViewUbicacion.text = inmueble.ubicacion
-
         holder.itemView.setOnClickListener {
-            onItemClick(inmueble)
+            val intent = Intent(holder.itemView.context, InmuebleDetailActivity::class.java)
+            intent.putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE, inmueble)
+            holder.itemView.context.startActivity(intent)
         }
     }
 
     override fun getItemCount() = inmuebles.size
 
+    fun setInmuebles(newInmuebles: List<Inmueble>) {
+        inmuebles = newInmuebles
+        notifyDataSetChanged()
+    }
 }

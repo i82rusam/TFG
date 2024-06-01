@@ -16,7 +16,7 @@
         android:theme="@style/Theme.TFG"
         tools:targetApi="31">
 
-
+        <activity android:name=".ui.TusInmueblesActivity"/>
         <activity android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -25,7 +25,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.AgregarInmuebleActivity"/>
-        <activity android:name=".ui.TusInmueblesActivity"/>
         <activity android:name=".ui.InmuebleDetailActivity"/>
     </application>
 

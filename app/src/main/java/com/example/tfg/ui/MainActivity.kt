@@ -2,7 +2,6 @@ package com.example.tfg.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
@@ -13,7 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_agregar_inmueble)
+        setContentView(R.layout.activity_main)
 
         // Inicializa Firebase
         FirebaseApp.initializeApp(this)
@@ -32,13 +31,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, TusInmueblesActivity::class.java)
             startActivity(intent)
         }
-
-        // Inicialización del botón guardar
-        val btnGuardar: Button = findViewById(R.id.btnGuardar)
-        Log.d("agregarInmuebleActivity", "Función botón MainActivity")
-
-        val intent = Intent(this, AgregarInmuebleActivity::class.java)
-        startActivity(intent)
 
     }
 }
