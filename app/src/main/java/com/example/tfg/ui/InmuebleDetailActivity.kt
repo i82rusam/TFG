@@ -1,12 +1,16 @@
 package com.example.tfg.ui
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
+import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
 
 class InmuebleDetailActivity : AppCompatActivity() {
@@ -15,12 +19,14 @@ class InmuebleDetailActivity : AppCompatActivity() {
         const val EXTRA_INMUEBLE = "EXTRA_INMUEBLE"
     }
 
+    private val firebaseRepository = FirebaseRepository(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inmueble_detail)
 
 
-        val inmueble = intent.getParcelableExtra<Inmueble>(EXTRA_INMUEBLE)
+        val inmueble = intent.extras?.getParcelable<Inmueble>(EXTRA_INMUEBLE)
 
         val textViewNombre: TextView = findViewById(R.id.textViewNombre)
         val textViewCiudad: TextView = findViewById(R.id.textViewCiudad)
@@ -30,18 +36,17 @@ class InmuebleDetailActivity : AppCompatActivity() {
         val textViewImagen: TextView = findViewById(R.id.textViewImagen)
         val textViewUsuario: TextView = findViewById(R.id.textViewUsuario)
 
-        textViewNombre.text = "Nombre: ${inmueble?.nombre}"
-        textViewCiudad.text = "Ciudad: ${inmueble?.ciudad}"
-        textViewAlquilado.text = "Alquilado: ${inmueble?.alquilado.toString()}"
-        textViewUbicacion.text = "Ubicacion: ${inmueble?.ubicacion}"
-        textViewDocumento.text = "Escritura: ${inmueble?.escritura}"
-        textViewImagen.text = "Imagen: ${inmueble?.imagen}"
-        textViewUsuario.text = "Usuario: ${inmueble?.usuario}"
+        textViewNombre.text = getString(R.string.nombre_inmueble, inmueble?.nombre)
+        textViewCiudad.text = getString(R.string.ciudad_inmueble, inmueble?.ciudad)
+        textViewAlquilado.text = getString(R.string.alquilado_inmueble, inmueble?.alquilado.toString())
+        textViewUbicacion.text = getString(R.string.ubicacion_inmueble, inmueble?.ubicacion)
+        textViewDocumento.text = getString(R.string.escritura_inmueble, inmueble?.escritura)
+        textViewImagen.text = getString(R.string.imagen_inmueble, inmueble?.imagen)
+        textViewUsuario.text = getString(R.string.usuario_inmueble, inmueble?.usuario)
 
 
-        val titleTextView: TextView = findViewById(R.id.textView)
-        titleTextView.setTextColor(Color.WHITE)
-        titleTextView.setOnClickListener {
+        val buttonThreeDots: ImageView = findViewById(R.id.buttonThreeDots)
+        buttonThreeDots.setOnClickListener {
             val popupMenu = PopupMenu(this, it)
             popupMenu.menuInflater.inflate(R.menu.menu_inmueble_detail, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { menuItem ->
@@ -52,6 +57,27 @@ class InmuebleDetailActivity : AppCompatActivity() {
                     }
                     R.id.action_delete -> {
                         // Aquí manejas la acción de borrar
+                        inmueble?.idInmueble?.let { id ->
+                            AlertDialog.Builder(this)
+                                .setTitle("Confirmación de borrado")
+                                .setMessage("¿Estás seguro de que quieres borrar el inmueble?")
+                                .setPositiveButton("Sí") { _, _ ->
+                                    firebaseRepository.deleteInmueble(id, {
+                                        // Aquí manejas el éxito de la operación de borrado
+                                        Toast.makeText(this, "Inmueble borrado con éxito", Toast.LENGTH_SHORT).show()
+                                        // Aquí recargas los inmuebles después de la eliminación
+                                        val intent = Intent(this, TusInmueblesActivity::class.java)
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        startActivity(intent)
+                                        finish()
+                                    }, { _ ->
+                                        // Aquí manejas el error de la operación de borrado
+                                        Toast.makeText(this, "Error al borrar el inmueble", Toast.LENGTH_SHORT).show()
+                                    })
+                                }
+                                .setNegativeButton("No", null)
+                                .show()
+                        }
                         true
                     }
                     else -> false

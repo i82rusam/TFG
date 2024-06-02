@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.InmuebleDetailActivity">
 
 
-    <TextView
-        android:id="@+id/textView"
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="43dp"
-        android:background="#009688"
-        android:gravity="center"
-        android:text="Información Inmueble"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TextSizeCheck,VisualLintBounds" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:background="#009688"
+            android:gravity="center"
+            android:text="Información Inmueble"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            tools:ignore="TextSizeCheck,VisualLintBounds" />
+
+        <ImageView
+            android:id="@+id/buttonThreeDots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_more_vert_black_24dp" />
+
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/textViewNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/frameLayout"
         android:text="Nombre del Inmueble"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -36,35 +48,41 @@
         android:id="@+id/textViewCiudad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewNombre"
         android:text="Ciudad" />
 
     <TextView
         android:id="@+id/textViewAlquilado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewCiudad"
         android:text="Alquilado" />
 
     <TextView
         android:id="@+id/textViewUbicacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewAlquilado"
         android:text="Ubicación" />
 
     <TextView
         android:id="@+id/textViewDocumento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewUbicacion"
         android:text="Documento" />
 
     <TextView
         android:id="@+id/textViewImagen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewDocumento"
         android:text="Imagen" />
 
     <TextView
         android:id="@+id/textViewUsuario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textViewImagen"
         android:text="Usuario" />
-</LinearLayout>
+</RelativeLayout>

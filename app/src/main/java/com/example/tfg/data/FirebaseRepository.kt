@@ -27,4 +27,11 @@ class FirebaseRepository(private val context: Context) {
             onFailure(e)
         }
     }
+    fun deleteInmueble(inmuebleId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("inmuebles").document(inmuebleId)
+            .delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onFailure(e) }
+    }
 }

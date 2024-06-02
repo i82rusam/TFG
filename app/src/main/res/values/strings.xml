@@ -9,5 +9,12 @@
     <string name="ingrese_el_nombre_del_inmueble">Ingrese el nombre del inmueble</string>
     <string name="ingrese_la_ubicacion_del_inmueble">Ingrese la ubicacion del inmueble</string>
 
+    <string name="nombre_inmueble">Nombre: %s</string>
+    <string name="ciudad_inmueble">Ciudad: %s</string>
+    <string name="alquilado_inmueble">Alquilado: %s</string>
+    <string name="ubicacion_inmueble">Ubicación: %s</string>
+    <string name="escritura_inmueble">Escritura: %s</string>
+    <string name="imagen_inmueble">Imagen: %s</string>
+    <string name="usuario_inmueble">Usuario: %s</string>
 
 </resources>

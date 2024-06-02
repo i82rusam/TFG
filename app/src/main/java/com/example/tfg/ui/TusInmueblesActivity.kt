@@ -30,20 +30,12 @@ class TusInmueblesActivity : AppCompatActivity() {
         // Inicializar el repositorio de Firebase
         repository = FirebaseRepository(this)
 
-        // Cargar los inmuebles desde Firebase
-        cargarInmuebles()
-    }
-
-
-    private fun cargarInmuebles() {
         repository.getInmuebles(
             onSuccess = { inmuebles ->
                 adapter = InmuebleAdapter(inmuebles) { inmueble ->
                     val intent = Intent(this, InmuebleDetailActivity::class.java)
-                    inmueble?.let {
-                        intent.putExtra("inmueble", it)
-                        startActivity(intent)
-                    }
+                    intent.putExtra("inmueble", inmueble)
+                    startActivity(intent)
                 }
                 recyclerView.adapter = adapter
             },
@@ -53,4 +45,5 @@ class TusInmueblesActivity : AppCompatActivity() {
             }
         )
     }
+
 }
