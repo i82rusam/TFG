@@ -16,7 +16,7 @@ import com.example.tfg.models.Inmueble
 class InmuebleDetailActivity : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_INMUEBLE = "EXTRA_INMUEBLE"
+        const val EXTRA_INMUEBLE = "com.example.tfg.EXTRA_INMUEBLE"
     }
 
     private val firebaseRepository = FirebaseRepository(this)
@@ -26,7 +26,8 @@ class InmuebleDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_inmueble_detail)
 
 
-        val inmueble = intent.extras?.getParcelable<Inmueble>(EXTRA_INMUEBLE)
+        @Suppress("DEPRECATION")
+        val inmueble: Inmueble? = intent.getParcelableExtra(EXTRA_INMUEBLE)
 
         val textViewNombre: TextView = findViewById(R.id.textViewNombre)
         val textViewCiudad: TextView = findViewById(R.id.textViewCiudad)
@@ -51,11 +52,11 @@ class InmuebleDetailActivity : AppCompatActivity() {
             popupMenu.menuInflater.inflate(R.menu.menu_inmueble_detail, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
-                    R.id.action_edit -> {
+                    R.id.btnEditar -> {
                         // Aquí manejas la acción de editar
                         true
                     }
-                    R.id.action_delete -> {
+                    R.id.btnEliminar -> {
                         // Aquí manejas la acción de borrar
                         inmueble?.idInmueble?.let { id ->
                             AlertDialog.Builder(this)

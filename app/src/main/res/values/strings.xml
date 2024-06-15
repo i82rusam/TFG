@@ -16,5 +16,7 @@
     <string name="escritura_inmueble">Escritura: %s</string>
     <string name="imagen_inmueble">Imagen: %s</string>
     <string name="usuario_inmueble">Usuario: %s</string>
-
+    <string name="borrar_inmueble">Borrar</string>
+    <string name="add_inmueble">Añadir Inmueble</string>
+    <string name="mis_inmuebles">Mis Inmuebles</string>
 </resources>

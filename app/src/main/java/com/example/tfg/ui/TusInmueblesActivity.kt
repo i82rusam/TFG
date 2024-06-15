@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
+import com.example.tfg.ui.adapter.InmuebleAdapter
 
 class TusInmueblesActivity : AppCompatActivity() {
 
@@ -30,20 +31,46 @@ class TusInmueblesActivity : AppCompatActivity() {
         // Inicializar el repositorio de Firebase
         repository = FirebaseRepository(this)
 
-        repository.getInmuebles(
-            onSuccess = { inmuebles ->
-                adapter = InmuebleAdapter(inmuebles) { inmueble ->
-                    val intent = Intent(this, InmuebleDetailActivity::class.java)
-                    intent.putExtra("inmueble", inmueble)
-                    startActivity(intent)
-                }
-                recyclerView.adapter = adapter
+        // Inicializar el adaptador con una lista vacía
+        adapter = InmuebleAdapter(emptyList(),
+            itemClick = { inmueble ->
+                val intent = Intent(this, InmuebleDetailActivity::class.java)
+                intent.putExtra("inmueble", inmueble)
+                startActivity(intent)
             },
-            onFailure = { e ->
-                // Manejar el error
-                e.printStackTrace()
+            itemDelete = { inmueble ->
+                repository.deleteInmueble(inmueble.idInmueble,
+                    onSuccess = {
+                        // Aquí puedes poner el código que se ejecutará cuando se haya borrado el inmueble con éxito
+                        // Por ejemplo, puedes volver a obtener la lista de inmuebles y actualizar el RecyclerView
+                        repository.getInmuebles(
+                            onSuccess = { inmuebles ->
+                                adapter.setInmuebles(inmuebles) },
+                            onFailure = { e ->
+                                // Manejar el error
+                                e.printStackTrace()
+                            }
+                        )
+                    },
+                    onFailure = { e ->
+                        // Manejar el error
+                        e.printStackTrace()
+                    }
+                )
             }
         )
-    }
+        recyclerView.adapter = adapter
+        // Inicializar el repositorio de Firebase
+    repository = FirebaseRepository(this)
 
+    repository.getInmuebles(
+    onSuccess = { inmuebles ->
+        adapter.setInmuebles(inmuebles)
+    },
+    onFailure = { e ->
+        // Manejar el error
+        e.printStackTrace()
+    }
+    )
+    }
 }

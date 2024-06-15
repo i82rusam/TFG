@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -13,19 +15,24 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
+import com.example.tfg.viewmodels.InmuebleViewModel
 import com.google.firebase.auth.FirebaseAuth
+import java.util.UUID
 
 class AgregarInmuebleActivity : AppCompatActivity() {
 
     private lateinit var repository: FirebaseRepository
     private lateinit var auth: FirebaseAuth
-    private var idAleatorio: Int = 0
+    private lateinit var viewModel: InmuebleViewModel
+
 
     private var documentUri: Uri? = null
     private var imageUri: Uri? = null
+    private var inmueble: Inmueble? = null
 
     private val documentResultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         documentUri = uri
@@ -57,15 +64,17 @@ class AgregarInmuebleActivity : AppCompatActivity() {
 
         repository = FirebaseRepository(this)
         auth = FirebaseAuth.getInstance()
+        viewModel = ViewModelProvider(this).get(InmuebleViewModel::class.java)
+
 
         val btnCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
-        btnCargarDocumento.setOnClickListener { view ->
+        btnCargarDocumento.setOnClickListener { _ ->
             // Lanza el contrato para obtener contenido cuando se pulsa el botón
             documentResultLauncher.launch("*/*")
         }
 
         val btnCargarImagen: Button = findViewById(R.id.btnCargarImagen)
-        btnCargarImagen.setOnClickListener { view ->
+        btnCargarImagen.setOnClickListener { _ ->
             // Lanza el contrato para obtener contenido cuando se pulsa el botón
             imageResultLauncher.launch("image/*")
         }
@@ -75,6 +84,39 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         btnGuardar.setOnClickListener { view ->
             Log.d("AgregarInmuebleActivity", "btnGuardar onClickListener llamado")
             guardarInmueble(view)
+        }
+
+
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_inmueble_detail, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.btnEliminar -> {
+                eliminarInmueble()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun eliminarInmueble() {
+        val localInmueble = inmueble
+        if (localInmueble != null) {
+            val idInmueble = localInmueble.idInmueble
+            viewModel.eliminarInmueble(idInmueble,
+                onSuccess = {
+                    Toast.makeText(this, "Inmueble eliminado correctamente", Toast.LENGTH_SHORT).show()
+                },
+                onFailure = { e ->
+                    Toast.makeText(this, "Error al eliminar el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        } else {
+            Toast.makeText(this, "No se puede eliminar el inmueble: ID no encontrado", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -92,8 +134,9 @@ class AgregarInmuebleActivity : AppCompatActivity() {
 
         Log.d("AgregarInmuebleActivity", "Datos recogidos: alquilado=$alquilado, ciudad=$ciudad, nombre=$nombre, ubicacion=$ubicacion")
 
+        val idAleatorio = UUID.randomUUID().toString()
 
-        val inmueble = Inmueble(alquilado, ciudad, documentUriString, idAleatorio.toString(), imageUriString, nombre, ubicacion, usuarioActual)
+        val inmueble = Inmueble(alquilado, ciudad, documentUriString, idAleatorio, imageUriString, nombre, ubicacion, usuarioActual)
 
         Log.d("AgregarInmuebleActivity", "Inmueble creado: $inmueble")
 

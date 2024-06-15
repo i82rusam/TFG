@@ -9,13 +9,14 @@
         android:id="@+id/textViewNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre del Inmueble"
+        android:text="@string/nombre_inmueble"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
         android:id="@+id/textViewCiudad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ciudad"
+        android:text="@string/ciudad_inmueble"
         android:textAppearance="?attr/textAppearanceListItemSmall" />
+
 </LinearLayout>

@@ -10,11 +10,11 @@
         android:id="@+id/btnAddInmueble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Añadir Inmueble" />
+        android:text="@string/add_inmueble" />
 
     <Button
         android:id="@+id/btnMyInmuebles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mis Inmuebles" />
+        android:text="@string/mis_inmuebles" />
 </LinearLayout>
