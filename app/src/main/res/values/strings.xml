@@ -19,4 +19,15 @@
     <string name="borrar_inmueble">Borrar</string>
     <string name="add_inmueble">Añadir Inmueble</string>
     <string name="mis_inmuebles">Mis Inmuebles</string>
+    <string name="boton_guardar">Guardar</string>
+    <string name="hint_nombre">Nombre</string>
+    <string name="hint_ciudad">Ciudad</string>
+    <string name="hint_alquilado">Alquilado</string>
+    <string name="hint_ubicacion">Ubicación</string>
+    <string name="hint_documento">Documento</string>
+    <string name="hint_imagen">Imagen</string>
+    <string name="hint_usuario">Usuario</string>
+    <string name="button_guardar">Guardar</string>
+
+
 </resources>

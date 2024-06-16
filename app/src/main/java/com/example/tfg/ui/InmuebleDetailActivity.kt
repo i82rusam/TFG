@@ -54,6 +54,9 @@ class InmuebleDetailActivity : AppCompatActivity() {
                 when (menuItem.itemId) {
                     R.id.btnEditar -> {
                         // Aquí manejas la acción de editar
+                        val intent = Intent(this, EditarInmuebleActivity::class.java)
+                        intent.putExtra("inmueble", inmueble)
+                        startActivity(intent)
                         true
                     }
                     R.id.btnEliminar -> {

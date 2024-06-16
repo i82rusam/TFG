@@ -19,6 +19,16 @@ class FirebaseRepository(private val context: Context) {
         }
     }
 
+    fun actualizarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        inmueblesCollection.document(inmueble.idInmueble).set(inmueble)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
+
     fun getInmuebles(onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
         inmueblesCollection.get().addOnSuccessListener { result ->
             val inmuebles = result.toObjects(Inmueble::class.java)
@@ -34,4 +44,6 @@ class FirebaseRepository(private val context: Context) {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e -> onFailure(e) }
     }
+
+
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_margin="8dp">
+
+        <EditText
+            android:id="@+id/editTextNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="name"
+            android:hint="@string/hint_nombre"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="textPersonName"
+            />
+
+        <EditText
+            android:id="@+id/editTextCiudad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_ciudad"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/editTextAlquilado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_alquilado"
+            android:inputType="number"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/editTextUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_ubicacion"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="textPostalAddress"/>
+
+        <EditText
+            android:id="@+id/editTextDocumento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_documento"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/editTextImagen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_imagen"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="textUri"/>
+
+
+        <Button
+            android:id="@+id/boton_guardar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/boton_guardar"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>

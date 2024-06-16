@@ -73,4 +73,8 @@ class InmuebleAdapter(
             notifyItemRangeRemoved(newSize, oldSize - newSize)
         }
     }
+    fun updateData(newInmuebles: List<Inmueble>) {
+        this.inmuebles = newInmuebles
+        notifyDataSetChanged()
+    }
 }
