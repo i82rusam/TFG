@@ -7,8 +7,8 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
-import com.google.firebase.FirebaseApp
 import com.example.tfg.ui.adapter.InmuebleAdapter
+import com.google.firebase.FirebaseApp
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,16 +26,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Inicializa adapter aquí antes de llamar a updateInmuebles
-        adapter = InmuebleAdapter(emptyList()) { inmueble ->}
+        adapter = InmuebleAdapter(
+            emptyList(),
+            itemClick = { inmueble ->
+                val intent = Intent(this, InmuebleDetailActivity::class.java)
+                intent.putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE, inmueble)
+                startActivity(intent)
+            },
+            itemDelete = { inmueble ->
+                repository.deleteInmueble(inmueble.idInmueble, onSuccess = {
+                    Log.d("MainActivity", "Inmueble eliminado con éxito en Firebase")
+                }, onFailure = { e ->
+                    Log.e("MainActivity", "Error al eliminar el inmueble en Firebase", e)
+                    e.printStackTrace()
+                })
+            }
+        )
 
         // Inicializa repository aquí
         repository = FirebaseRepository(this)
 
         // Inicializa Firebase
         FirebaseApp.initializeApp(this)
-
-        // Inicializa el adaptador con una lista vacía y una función de clic vacía
-       // adapter = InmuebleAdapter(emptyList()) {}
 
         //Inicializa Botón Añadir Inmueble
         val btnAddInmueble: Button = findViewById(R.id.btnAddInmueble)

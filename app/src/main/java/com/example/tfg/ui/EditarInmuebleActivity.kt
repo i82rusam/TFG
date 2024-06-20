@@ -21,7 +21,7 @@ class EditarInmuebleActivity : AppCompatActivity() {
         repository = FirebaseRepository(this)
 
         // Obtener los datos del inmueble del intent
-        inmueble = intent.getSerializableExtra("inmueble") as Inmueble
+        inmueble = intent.getParcelableExtra<Inmueble>("inmueble")!!
 
         // Referenciar las vistas
         val editTextNombre: EditText = findViewById(R.id.editTextNombre)
