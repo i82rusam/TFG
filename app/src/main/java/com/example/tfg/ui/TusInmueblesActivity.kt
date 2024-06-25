@@ -45,7 +45,8 @@ class TusInmueblesActivity : AppCompatActivity() {
                         // Por ejemplo, puedes volver a obtener la lista de inmuebles y actualizar el RecyclerView
                         repository.getInmuebles(
                             onSuccess = { inmuebles ->
-                                adapter.setInmuebles(inmuebles) },
+                                adapter.setInmuebles(inmuebles)
+                            },
                             onFailure = { e ->
                                 // Manejar el error
                                 e.printStackTrace()
@@ -61,16 +62,28 @@ class TusInmueblesActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
         // Inicializar el repositorio de Firebase
-    repository = FirebaseRepository(this)
+        repository = FirebaseRepository(this)
 
-    repository.getInmuebles(
-    onSuccess = { inmuebles ->
-        adapter.setInmuebles(inmuebles)
-    },
-    onFailure = { e ->
-        // Manejar el error
-        e.printStackTrace()
+        updateData()
     }
-    )
+    override fun onResume() {
+        super.onResume()
+
+        // Actualiza los datos cada vez que la actividad se reanuda
+        updateData()
+    }
+
+    private fun updateData() {
+        // Obtén los datos actualizados de Firebase
+        repository.getInmuebles(
+            onSuccess = { inmuebles ->
+                // Actualiza los datos en el adaptador
+                adapter.setInmuebles(inmuebles)
+            },
+            onFailure = { e ->
+                // Maneja el error
+                e.printStackTrace()
+            }
+        )
     }
 }

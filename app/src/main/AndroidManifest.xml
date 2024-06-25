@@ -17,18 +17,20 @@
         tools:targetApi="31">
 
         <activity android:name=".ui.TusInmueblesActivity"/>
-        <activity android:name=".ui.MainActivity"
+        <activity android:name=".ui.MainActivity"/>
+        <activity android:name=".ui.AgregarInmuebleActivity"/>
+        <activity android:name=".ui.InmuebleDetailActivity"/>
+        <activity android:name=".ui.EditarInmuebleActivity"/>
+        <activity android:name=".ui.InicioActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.AgregarInmuebleActivity"/>
-        <activity android:name=".ui.InmuebleDetailActivity"/>
+        <activity android:name=".ui.RegistroActivity"/>
+        <activity android:name=".ui.LoginActivity"/>
     </application>
-
-
 
 
 </manifest>
