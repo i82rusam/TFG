@@ -6,27 +6,31 @@
     tools:context=".ui.LoginActivity">
 
     <EditText
-        android:id="@+id/et_username"
+        android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints="username"
-        android:hint="Username"
-        android:inputType="text"/>
+        android:autofillHints="email"
+        android:hint="Email"
+        android:inputType="text"
+        tools:ignore="DuplicateClickableBoundsCheck,HardcodedText,TextFields,VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/et_email"
         android:autofillHints="password"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_below="@id/et_username" />
+        android:minHeight="48dp"
+        tools:ignore="HardcodedText,NotSibling,VisualLintTextFieldSize" />
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Iniciar sesión"
-        android:layout_below="@id/et_password" />
+        android:layout_below="@id/et_password"
+        tools:ignore="HardcodedText" />
 
 </RelativeLayout>

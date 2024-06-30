@@ -47,7 +47,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun registrarUsuario(usuario: Usuario, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        auth.createUserWithEmailAndPassword(usuario.username, usuario.password)
+        auth.createUserWithEmailAndPassword(usuario.email, usuario.password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // El usuario se registró con éxito
@@ -69,7 +69,7 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun iniciarSesion(usuario: Usuario, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        auth.signInWithEmailAndPassword(usuario.username, usuario.password)
+        auth.signInWithEmailAndPassword(usuario.email, usuario.password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // El usuario inició sesión con éxito

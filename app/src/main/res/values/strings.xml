@@ -32,6 +32,7 @@
     <string name="btn_login">Iniciar sesión</string>
     <string name="hint_username">Nombre de usuario</string>
     <string name="hint_password">Contraseña</string>
+    <string name="hint_email">Correo electrónico</string>
 
 
 
