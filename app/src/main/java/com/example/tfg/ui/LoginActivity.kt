@@ -2,6 +2,7 @@ package com.example.tfg.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -19,27 +20,41 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val etEmail = findViewById<EditText>(R.id.et_email)
-        val etPassword = findViewById<EditText>(R.id.et_password)
-        val btnLogin = findViewById<Button>(R.id.btn_login)
+        val buttonLogin = findViewById<Button>(R.id.buttonRegister)
+        val editTextEmail = findViewById<EditText>(R.id.editTextEmail) // Asegúrate de que el ID corresponda al campo de correo electrónico
+        val editTextPassword = findViewById<EditText>(R.id.editTextPassword)
 
-        btnLogin.setOnClickListener {
-            val email = etEmail.text.toString()
-            val password = etPassword.text.toString()
+        buttonLogin.setOnClickListener {
+            val email = editTextEmail.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Inicio de sesión exitoso, navega al MainActivity
+                        // Inicio de sesión exitoso
+                        Log.d("LoginActivity", "Inicio de sesión exitoso")
+                        Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+
+                        // Redirigir al usuario a MainActivity
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
-                        finish()
+                        finish() // Cierra LoginActivity
                     } else {
-                        // Si el inicio de sesión falla, muestra un mensaje al usuario.
-                        Toast.makeText(baseContext, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show()
+                        // Inicio de sesión fallido, maneja el error
+                        Log.w("LoginActivity", "Error al iniciar sesión", task.exception)
+                        Toast.makeText(
+                            this,
+                            "Error al iniciar sesión: ${task.exception?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
+
         }
     }
 }

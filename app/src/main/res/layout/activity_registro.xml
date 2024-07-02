@@ -26,6 +26,15 @@
         android:inputType="textPassword"
         android:minHeight="48dp" />
 
+    <EditText
+        android:id="@+id/et_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="username"
+        android:hint="@string/hint_username"
+        android:inputType="text"
+        android:minHeight="48dp" />
+
     <Spinner
         android:id="@+id/spinner_role"
         android:layout_width="match_parent"

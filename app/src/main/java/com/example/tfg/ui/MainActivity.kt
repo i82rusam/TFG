@@ -42,16 +42,16 @@ class MainActivity : AppCompatActivity() {
                 })
             }
         )
+        // Inicializa Firebase
+                FirebaseApp.initializeApp(this)
 
         // Inicializa repository aquí
         repository = FirebaseRepository(this)
 
-        // Inicializa Firebase
-        FirebaseApp.initializeApp(this)
 
         //Inicializa Botón Añadir Inmueble
         val btnAddInmueble: Button = findViewById(R.id.btnAddInmueble)
-        btnAddInmueble.setOnClickListener { _ ->
+        btnAddInmueble.setOnClickListener {
             val intent = Intent(this, AgregarInmuebleActivity::class.java)
             startActivity(intent)
         }
