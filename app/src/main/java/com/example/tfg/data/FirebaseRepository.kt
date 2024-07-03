@@ -31,11 +31,16 @@ class FirebaseRepository(private val context: Context) {
     }
 
     fun getInmuebles(onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
-        inmueblesCollection.get().addOnSuccessListener { result ->
-            val inmuebles = result.toObjects(Inmueble::class.java)
-            onSuccess(inmuebles)
-        }.addOnFailureListener { e ->
-            onFailure(e)
+        val userEmail = FirebaseAuth.getInstance().currentUser?.email
+        if (userEmail != null) {
+            inmueblesCollection.whereEqualTo("usuario", userEmail).get().addOnSuccessListener { result ->
+                val inmuebles = result.toObjects(Inmueble::class.java)
+                onSuccess(inmuebles)
+            }.addOnFailureListener { e ->
+                onFailure(e)
+            }
+        } else {
+            onFailure(Exception("Usuario no autenticado"))
         }
     }
     fun deleteInmueble(inmuebleId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {

@@ -2,6 +2,7 @@ package com.example.tfg.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -123,14 +124,19 @@ class AgregarInmuebleActivity : AppCompatActivity() {
     fun guardarInmueble(view: View) {
         Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
 
+        // Comprobaciones de autenticación del usuario
+        val usuarioActual = auth.currentUser?.displayName
+        if (auth.currentUser == null || usuarioActual.isNullOrEmpty()) {
+            Toast.makeText(this, "Debe estar autenticado para agregar un inmueble", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val alquilado = findViewById<EditText>(R.id.editTextAlquilado).text.toString().toIntOrNull() ?: 0
         val ciudad = findViewById<EditText>(R.id.editTextCiudad).text.toString()
-        val documentUriString = documentUri?.toString() ?:"a"
-        val imageUriString = imageUri?.toString() ?:"a"
+        val documentUriString = documentUri?.toString() ?: "a"
+        val imageUriString = imageUri?.toString() ?: "a"
         val nombre = findViewById<EditText>(R.id.editTextNombre).text.toString()
         val ubicacion = findViewById<EditText>(R.id.editTextUbicacion).text.toString()
-        val usuarioActual = auth.currentUser?.displayName ?: "Nombre de usuario predeterminado"
-
 
         Log.d("AgregarInmuebleActivity", "Datos recogidos: alquilado=$alquilado, ciudad=$ciudad, nombre=$nombre, ubicacion=$ubicacion")
 
@@ -144,11 +150,16 @@ class AgregarInmuebleActivity : AppCompatActivity() {
             onSuccess = {
                 Toast.makeText(this, "Inmueble añadido correctamente", Toast.LENGTH_SHORT).show()
 
-                //Borrar los campos después de guardar
+                // Limpia los campos después de guardar
                 findViewById<EditText>(R.id.editTextAlquilado).setText("")
                 findViewById<EditText>(R.id.editTextCiudad).setText("")
                 findViewById<EditText>(R.id.editTextNombre).setText("")
                 findViewById<EditText>(R.id.editTextUbicacion).setText("")
+
+                // Redirige a MainActivity
+                val intent = Intent(this, TusInmueblesActivity::class.java)
+                startActivity(intent)
+                finish() // Opcional: Llama a finish() si deseas sacar esta actividad de la pila de actividades
             },
             onFailure = { e ->
                 Toast.makeText(this, "Error al añadir el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()

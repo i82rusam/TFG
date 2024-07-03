@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             }
         )
         // Inicializa Firebase
-                FirebaseApp.initializeApp(this)
+        FirebaseApp.initializeApp(this)
 
         // Inicializa repository aquí
         repository = FirebaseRepository(this)
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         //Inicializa Botón Añadir Inmueble
         val btnAddInmueble: Button = findViewById(R.id.btnAddInmueble)
         btnAddInmueble.setOnClickListener {
+            Log.d("MainActivity", "Intentando abrir AgregarInmuebleActivity")
+            Toast.makeText(this, "Intentando abrir AgregarInmuebleActivity", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, AgregarInmuebleActivity::class.java)
             startActivity(intent)
         }
