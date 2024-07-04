@@ -9,26 +9,28 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
 import com.example.tfg.viewmodels.InmuebleViewModel
+import com.example.tfg.viewmodels.InmuebleViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import java.util.UUID
+
 
 class AgregarInmuebleActivity : AppCompatActivity() {
 
     private lateinit var repository: FirebaseRepository
     private lateinit var auth: FirebaseAuth
-    private lateinit var viewModel: InmuebleViewModel
+
+    private val viewModel: InmuebleViewModel by viewModels { InmuebleViewModelFactory(FirebaseRepository(this)) }
 
 
     private var documentUri: Uri? = null
@@ -63,9 +65,10 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_agregar_inmueble)
         Log.d("agregarInmuebleActivity", "Función botón llamada1")
 
-        repository = FirebaseRepository(this)
+        val factory = InmuebleViewModelFactory(FirebaseRepository(this))
+
+
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(this).get(InmuebleViewModel::class.java)
 
 
         val btnCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
@@ -82,9 +85,9 @@ class AgregarInmuebleActivity : AppCompatActivity() {
 
 
         val btnGuardar: Button = findViewById(R.id.btnGuardar)
-        btnGuardar.setOnClickListener { view ->
+        btnGuardar.setOnClickListener { _ ->
             Log.d("AgregarInmuebleActivity", "btnGuardar onClickListener llamado")
-            guardarInmueble(view)
+            guardarInmueble()
         }
 
 
@@ -121,12 +124,16 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         }
     }
 
-    fun guardarInmueble(view: View) {
+    @SuppressLint("SetTextI18n")
+    fun guardarInmueble() {
         Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
 
         // Comprobaciones de autenticación del usuario
-        val usuarioActual = auth.currentUser?.displayName
-        if (auth.currentUser == null || usuarioActual.isNullOrEmpty()) {
+        //Obtiene la instancia actual de FirebaseAuth
+        val usuarioActual = auth.currentUser
+
+        //Comprueba que el usuario está autenticado
+        if (usuarioActual == null || usuarioActual.displayName.isNullOrEmpty()) {
             Toast.makeText(this, "Debe estar autenticado para agregar un inmueble", Toast.LENGTH_SHORT).show()
             return
         }
@@ -142,7 +149,7 @@ class AgregarInmuebleActivity : AppCompatActivity() {
 
         val idAleatorio = UUID.randomUUID().toString()
 
-        val inmueble = Inmueble(alquilado, ciudad, documentUriString, idAleatorio, imageUriString, nombre, ubicacion, usuarioActual)
+        val inmueble = Inmueble(alquilado, ciudad, documentUriString, idAleatorio, imageUriString, nombre, ubicacion, usuarioActual.displayName!!)
 
         Log.d("AgregarInmuebleActivity", "Inmueble creado: $inmueble")
 
@@ -166,7 +173,7 @@ class AgregarInmuebleActivity : AppCompatActivity() {
             }
         )
     }
-        fun cargarDocumento(@SuppressLint("RestrictedApi") view: View) {
+        fun cargarDocumento() {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 documentResultLauncher.launch("*/*")
             } else {

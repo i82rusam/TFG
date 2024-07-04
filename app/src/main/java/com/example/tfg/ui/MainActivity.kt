@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
-
         // Actualiza la lista de inmuebles cada vez que la actividad se reanuda
         updateInmuebles()
     }

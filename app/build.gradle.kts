@@ -51,5 +51,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-analytics")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
-
+    implementation ("androidx.fragment:fragment-ktx:1.8.1")
+    implementation("androidx.activity:activity-ktx:1.4.0")
 }
