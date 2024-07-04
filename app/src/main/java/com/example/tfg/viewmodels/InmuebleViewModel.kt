@@ -18,7 +18,7 @@ class InmuebleViewModel(private val repository: FirebaseRepository) : ViewModel(
         repository.deleteInmueble(id, onSuccess, onFailure)
     }
 
-    //fun actualizarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    //    repository.actualizarInmueble(inmueble, onSuccess, onFailure)
-    //}
+    fun actualizarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        repository.actualizarInmueble(inmueble, onSuccess, onFailure)
+    }
 }
