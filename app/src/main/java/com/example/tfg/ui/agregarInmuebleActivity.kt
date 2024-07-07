@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.tfg.R
@@ -64,12 +65,6 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agregar_inmueble)
         Log.d("agregarInmuebleActivity", "Función botón llamada1")
-
-        val factory = InmuebleViewModelFactory(FirebaseRepository(this))
-
-
-        auth = FirebaseAuth.getInstance()
-
 
         val btnCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
         btnCargarDocumento.setOnClickListener { _ ->
@@ -128,13 +123,22 @@ class AgregarInmuebleActivity : AppCompatActivity() {
     fun guardarInmueble() {
         Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
 
-        // Comprobaciones de autenticación del usuario
-        //Obtiene la instancia actual de FirebaseAuth
-        val usuarioActual = auth.currentUser
+        //Obtiene la instancia actual de FirebaseAuth y el usuario actual
+        val usuarioActual = FirebaseAuth.getInstance().currentUser
 
-        //Comprueba que el usuario está autenticado
+        // Comprueba que el usuario está autenticado
         if (usuarioActual == null || usuarioActual.displayName.isNullOrEmpty()) {
-            Toast.makeText(this, "Debe estar autenticado para agregar un inmueble", Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(this).apply {
+                setTitle("Autenticación requerida")
+                setMessage("Debe estar autenticado para agregar un inmueble. ¿Desea iniciar sesión ahora?")
+                setPositiveButton("Iniciar sesión") { dialog, which ->
+                    val intent = Intent(context, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                setNegativeButton("Cancelar", null)
+                show()
+            }
             return
         }
 

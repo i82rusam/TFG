@@ -40,21 +40,24 @@ class LoginActivity : AppCompatActivity() {
                         Log.d("LoginActivity", "Inicio de sesión exitoso")
                         Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
-                        // Redirigir al usuario a MainActivity
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish() // Cierra LoginActivity
+                        // Verificar si currentUser no es null
+                        val currentUser = auth.currentUser
+                        if (currentUser != null) {
+                            Log.d("LoginActivity", "Usuario actual: ${currentUser.email}")
+                            // Redirigir al usuario a MainActivity
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                            finish() // Cierra LoginActivity
+                        } else {
+                            Log.d("LoginActivity", "currentUser es null después del inicio de sesión")
+                            Toast.makeText(this, "Error de autenticación post-inicio de sesión", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
-                        // Inicio de sesión fallido, maneja el error
+                        // Inicio de sesión fallido, manejar el error
                         Log.w("LoginActivity", "Error al iniciar sesión", task.exception)
-                        Toast.makeText(
-                            this,
-                            "Error al iniciar sesión: ${task.exception?.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this, "Error al iniciar sesión: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
-
         }
     }
 }
