@@ -1,13 +1,16 @@
 package com.example.tfg.ui
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.ui.adapter.InmuebleAdapter
+import com.google.firebase.auth.FirebaseAuth
 
 class TusInmueblesActivity : AppCompatActivity() {
 
@@ -39,19 +42,25 @@ class TusInmueblesActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             itemDelete = { inmueble ->
-                repository.deleteInmueble(inmueble.idInmueble,
+                repository.eliminarInmueble(inmueble.idInmueble,
                     onSuccess = {
                         // Aquí puedes poner el código que se ejecutará cuando se haya borrado el inmueble con éxito
                         // Por ejemplo, puedes volver a obtener la lista de inmuebles y actualizar el RecyclerView
-                        repository.getInmuebles(
-                            onSuccess = { inmuebles ->
-                                adapter.setInmuebles(inmuebles)
-                            },
-                            onFailure = { e ->
-                                // Manejar el error
-                                e.printStackTrace()
-                            }
-                        )
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid
+                        if (userId != null) {
+                            repository.getInmuebles(
+                                userId, // Pasa el userId como argumento
+                                onSuccess = { inmuebles ->
+                                    adapter.setInmuebles(inmuebles)
+                                },
+                                onFailure = { e ->
+                                    // Manejar el error
+                                    e.printStackTrace()
+                                }
+                            )
+                        } else {
+                            Log.d(TAG, "Usuario no autenticado")
+                        }
                     },
                     onFailure = { e ->
                         // Manejar el error
@@ -75,15 +84,20 @@ class TusInmueblesActivity : AppCompatActivity() {
 
     private fun updateData() {
         // Obtén los datos actualizados de Firebase
-        repository.getInmuebles(
-            onSuccess = { inmuebles ->
-                // Actualiza los datos en el adaptador
-                adapter.setInmuebles(inmuebles)
-            },
-            onFailure = { e ->
-                // Maneja el error
-                e.printStackTrace()
-            }
-        )
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            repository.getInmuebles(
+                userId, // Pasa el userId como argumento
+                onSuccess = { inmuebles ->
+                    adapter.setInmuebles(inmuebles)
+                    adapter.notifyDataSetChanged()
+                },
+                onFailure = { e ->
+                    Log.e(TAG, "Error al obtener inmuebles: ", e)
+                }
+            )
+        } else {
+            Log.d(TAG, "Usuario no autenticado")
+        }
     }
 }

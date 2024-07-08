@@ -11,16 +11,16 @@ class InmuebleViewModel(private val repository: FirebaseRepository) : ViewModel(
         repository.agregarInmueble(inmueble, onSuccess, onFailure)
     }
 
-    fun obtenerInmuebles(onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
-        repository.getInmuebles(onSuccess, onFailure)
-    }
-
-    fun eliminarInmueble(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        repository.deleteInmueble(id, onSuccess, onFailure)
+    fun obtenerInmuebles(userId: String, onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
+        repository.getInmuebles(userId, onSuccess, onFailure)
     }
 
     fun actualizarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         repository.actualizarInmueble(inmueble, onSuccess, onFailure)
+    }
+
+    fun eliminarInmueble(idInmueble: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        repository.eliminarInmueble(idInmueble, onSuccess, onFailure)
     }
 }
 

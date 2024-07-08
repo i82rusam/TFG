@@ -66,7 +66,7 @@ class InmuebleDetailActivity : AppCompatActivity() {
                                 .setTitle("Confirmación de borrado")
                                 .setMessage("¿Estás seguro de que quieres borrar el inmueble?")
                                 .setPositiveButton("Sí") { _, _ ->
-                                    firebaseRepository.deleteInmueble(id, {
+                                    firebaseRepository.eliminarInmueble(id, {
                                         // Aquí manejas el éxito de la operación de borrado
                                         Toast.makeText(this, "Inmueble borrado con éxito", Toast.LENGTH_SHORT).show()
                                         // Aquí recargas los inmuebles después de la eliminación

@@ -30,20 +30,20 @@ class FirebaseRepository(private val context: Context) {
             }
     }
 
-    fun getInmuebles(onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email
-        if (userEmail != null) {
-            inmueblesCollection.whereEqualTo("usuario", userEmail).get().addOnSuccessListener { result ->
-                val inmuebles = result.toObjects(Inmueble::class.java)
+    fun getInmuebles(userId: String, onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("inmuebles")
+            .whereEqualTo("usuarioId", userId)
+            .get()
+            .addOnSuccessListener { documents ->
+                val inmuebles = documents.toObjects(Inmueble::class.java)
                 onSuccess(inmuebles)
-            }.addOnFailureListener { e ->
-                onFailure(e)
             }
-        } else {
-            onFailure(Exception("Usuario no autenticado"))
-        }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
     }
-    fun deleteInmueble(inmuebleId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+
+    fun eliminarInmueble(inmuebleId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         db.collection("inmuebles").document(inmuebleId)
             .delete()

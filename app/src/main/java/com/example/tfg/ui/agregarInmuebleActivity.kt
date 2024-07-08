@@ -1,9 +1,6 @@
 package com.example.tfg.ui
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
@@ -25,14 +21,12 @@ import com.example.tfg.viewmodels.InmuebleViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import java.util.UUID
 
-
 class AgregarInmuebleActivity : AppCompatActivity() {
 
     private lateinit var repository: FirebaseRepository
     private lateinit var auth: FirebaseAuth
 
     private val viewModel: InmuebleViewModel by viewModels { InmuebleViewModelFactory(FirebaseRepository(this)) }
-
 
     private var documentUri: Uri? = null
     private var imageUri: Uri? = null
@@ -41,17 +35,16 @@ class AgregarInmuebleActivity : AppCompatActivity() {
     private val documentResultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         documentUri = uri
         if (uri != null) {
-            Toast.makeText(this, "Documento cargado: $uri", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.document_loaded, uri.toString()), Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "No se seleccionó ningún documento", Toast.LENGTH_SHORT).show()
         }
     }
 
     private val imageResultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        // Este bloque de código se ejecutará cuando se seleccione un archivo
         imageUri = uri
         if (uri != null) {
-            Toast.makeText(this, "Imagen cargada: $uri", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.image_loaded, uri.toString()), Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
         }
@@ -64,29 +57,26 @@ class AgregarInmuebleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agregar_inmueble)
-        Log.d("agregarInmuebleActivity", "Función botón llamada1")
+        Log.d("AgregarInmuebleActivity", "Función botón llamada1")
+        repository = FirebaseRepository(this)
 
         val btnCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
         btnCargarDocumento.setOnClickListener { _ ->
-            // Lanza el contrato para obtener contenido cuando se pulsa el botón
             documentResultLauncher.launch("*/*")
         }
 
         val btnCargarImagen: Button = findViewById(R.id.btnCargarImagen)
         btnCargarImagen.setOnClickListener { _ ->
-            // Lanza el contrato para obtener contenido cuando se pulsa el botón
             imageResultLauncher.launch("image/*")
         }
-
 
         val btnGuardar: Button = findViewById(R.id.btnGuardar)
         btnGuardar.setOnClickListener { _ ->
             Log.d("AgregarInmuebleActivity", "btnGuardar onClickListener llamado")
             guardarInmueble()
         }
-
-
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_inmueble_detail, menu)
         return true
@@ -95,14 +85,20 @@ class AgregarInmuebleActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.btnEliminar -> {
-                eliminarInmueble()
+                inmueble?.let {
+                    eliminarInmueble(it.idInmueble, {
+                        Toast.makeText(this, "Inmueble eliminado correctamente", Toast.LENGTH_SHORT).show()
+                    }, { e ->
+                        Toast.makeText(this, "Error al eliminar el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
+                    })
+                } ?: Toast.makeText(this, "Inmueble no seleccionado o inexistente", Toast.LENGTH_SHORT).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    fun eliminarInmueble() {
+    fun eliminarInmueble(idInmueble: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val localInmueble = inmueble
         if (localInmueble != null) {
             val idInmueble = localInmueble.idInmueble
@@ -110,24 +106,23 @@ class AgregarInmuebleActivity : AppCompatActivity() {
                 onSuccess = {
                     Toast.makeText(this, "Inmueble eliminado correctamente", Toast.LENGTH_SHORT).show()
                 },
-                onFailure = { e ->
+                onFailure = { e: Exception ->
                     Toast.makeText(this, "Error al eliminar el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             )
         } else {
-            Toast.makeText(this, "No se puede eliminar el inmueble: ID no encontrado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No se puede eliminar un inmueble inexistente", Toast.LENGTH_SHORT).show()
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    fun guardarInmueble() {
+    private fun guardarInmueble() {
         Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
 
-        //Obtiene la instancia actual de FirebaseAuth y el usuario actual
-        val usuarioActual = FirebaseAuth.getInstance().currentUser
+        // Obtiene la instancia actual de FirebaseAuth y el usuario actual
+        val usuarioActual = FirebaseAuth.getInstance().currentUser ?: return
 
         // Comprueba que el usuario está autenticado
-        if (usuarioActual == null || usuarioActual.displayName.isNullOrEmpty()) {
+        if (usuarioActual == null) {
             AlertDialog.Builder(this).apply {
                 setTitle("Autenticación requerida")
                 setMessage("Debe estar autenticado para agregar un inmueble. ¿Desea iniciar sesión ahora?")
@@ -153,7 +148,7 @@ class AgregarInmuebleActivity : AppCompatActivity() {
 
         val idAleatorio = UUID.randomUUID().toString()
 
-        val inmueble = Inmueble(alquilado, ciudad, documentUriString, idAleatorio, imageUriString, nombre, ubicacion, usuarioActual.displayName!!)
+        val inmueble = Inmueble(alquilado, ciudad, documentUriString, idAleatorio, imageUriString, nombre, ubicacion, usuarioActual.uid)
 
         Log.d("AgregarInmuebleActivity", "Inmueble creado: $inmueble")
 
@@ -176,27 +171,5 @@ class AgregarInmuebleActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error al añadir el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         )
-    }
-        fun cargarDocumento() {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                documentResultLauncher.launch("*/*")
-            } else {
-                Toast.makeText(this, "Permiso de lectura no concedido", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_READ_STORAGE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Permiso de lectura concedido", Toast.LENGTH_SHORT).show()
-                    documentResultLauncher.launch("*/*")
-                } else {
-                    Toast.makeText(this, "Permiso de lectura denegado", Toast.LENGTH_SHORT).show()
-                }
-                return
-            }
-        }
     }
 }
