@@ -84,20 +84,23 @@ class TusInmueblesActivity : AppCompatActivity() {
 
     private fun updateData() {
         // Obtén los datos actualizados de Firebase
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            repository.getInmuebles(
-                userId, // Pasa el userId como argumento
-                onSuccess = { inmuebles ->
-                    adapter.setInmuebles(inmuebles)
-                    adapter.notifyDataSetChanged()
-                },
-                onFailure = { e ->
-                    Log.e(TAG, "Error al obtener inmuebles: ", e)
-                }
-            )
-        } else {
-            Log.d(TAG, "Usuario no autenticado")
-        }
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null) {
+                repository.getInmuebles(
+                    userId,
+                    onSuccess = { inmuebles ->
+                        runOnUiThread {
+                            adapter.setInmuebles(inmuebles)
+                            adapter.notifyDataSetChanged()
+                        }
+                    },
+                    onFailure = { exception ->
+                        Log.e(TAG, "Error fetching inmuebles for user $userId", exception)
+                    }
+                )
+            } else {
+                Log.d(TAG, "Usuario no autenticado")
+            }
+
     }
 }

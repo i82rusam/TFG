@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
@@ -58,6 +59,12 @@ class MainActivity : AppCompatActivity() {
 
         // Inicializa repository aquí
         repository = FirebaseRepository(this)
+
+        val imageView = findViewById<ImageView>(R.id.imageViewProfile)
+        imageView.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
 
         // Inicializa Botón Añadir Inmueble
         val btnAddInmueble: Button = findViewById(R.id.btnAddInmueble)

@@ -36,6 +36,16 @@
     <string name="document_loaded">Documento cargado: %1$s</string>
     <string name="image_loaded">Imagen cargada: %1$s</string>
 
+    <string name="error_al_subir_archivo">Error al subir archivo: %1$s</string>
+    <string name="error_al_subir_imagen">Error al subir imagen: %1$s</string>
+    <string name="inmueble_anadido_correctamente">Inmueble añadido correctamente</string>
+    <string name="error_al_anadir_inmueble">Error al añadir el inmueble: %1$s</string>
+    <string name="profile_icon_description">Descripción del perfil</string>
+
+    <string name="profile_image">Imagen de perfil</string>
+    <string name="email">Correo electrónico</string>
+    <string name="change_password">Cambiar Contraseña</string>
+    <string name="sign_out">Cerrar Sesión</string>
 
 
 </resources>

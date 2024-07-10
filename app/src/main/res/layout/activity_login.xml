@@ -17,6 +17,9 @@
         android:hint="@string/hint_email"
         android:inputType="text"
         android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints,TextContrastCheck,TextFields,VisualLintTextFieldSize" />
 
     <EditText
