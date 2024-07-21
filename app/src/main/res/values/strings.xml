@@ -3,7 +3,7 @@
     <string name="introduzca_informacion_del_inmueble">Introduzca Informacion del Inmueble</string>
     <string name="ingrese_la_ciudad">Ingrese la Ciudad</string>
     <string name="guardar">Guardar</string>
-    <string name="cargar_documento">Cargar Documento</string>
+    <string name="cargar_documento">Cargar Escritura</string>
     <string name="se_encuentra_alquilado">Se encuentra alquilado</string>
     <string name="cargar_imagen">Cargar Imagen</string>
     <string name="ingrese_el_nombre_del_inmueble">Ingrese el nombre del inmueble</string>
@@ -47,5 +47,8 @@
     <string name="change_password">Cambiar Contraseña</string>
     <string name="sign_out">Cerrar Sesión</string>
 
-
+    <string name="nombre">Nombre</string>
+    <string name="apellidos">Apellidos</string>
+    <string name="nombre_apellidos">%1$s %2$s</string>
+    <string name="username">Usuario </string>
 </resources>

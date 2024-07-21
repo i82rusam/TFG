@@ -7,6 +7,20 @@
     android:gravity="center">
 
     <EditText
+        android:id="@+id/editTextNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/nombre"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/editTextApellidos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/apellidos"
+        android:minHeight="48dp" />
+
+    <EditText
         android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

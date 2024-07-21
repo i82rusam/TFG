@@ -25,7 +25,6 @@ class InmuebleDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inmueble_detail)
 
-
         @Suppress("DEPRECATION")
         val inmueble: Inmueble? = intent.getParcelableExtra(EXTRA_INMUEBLE)
 
@@ -93,6 +92,13 @@ class InmuebleDetailActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_inmueble_detail, menu)
         return true
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, TusInmueblesActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 

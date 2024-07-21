@@ -11,9 +11,9 @@ class UsuarioViewModel(private val repository: FirebaseRepository) : ViewModel()
         repository.iniciarSesion(usuario, onSuccess, onFailure)
     }
 
-   // fun cerrarSesion() {
-     //   repository.cerrarSesion()
-    //}
+   fun cerrarSesion() {
+        repository.signOut()
+   }
 
     fun registrarUsuario(usuario: Usuario, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         repository.registrarUsuario(usuario, onSuccess, onFailure)
