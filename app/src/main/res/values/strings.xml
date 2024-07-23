@@ -7,12 +7,13 @@
     <string name="se_encuentra_alquilado">Se encuentra alquilado</string>
     <string name="cargar_imagen">Cargar Imagen</string>
     <string name="ingrese_el_nombre_del_inmueble">Ingrese el nombre del inmueble</string>
-    <string name="ingrese_la_ubicacion_del_inmueble">Ingrese la ubicacion del inmueble</string>
+    <string name="ingrese_la_ubicacion_del_inmueble">Ingrese la ubicacion del inmueble, calle, casa, bloque, piso...</string>
 
     <string name="nombre_inmueble">Nombre: %s</string>
     <string name="ciudad_inmueble">Ciudad: %s</string>
     <string name="alquilado_inmueble">Alquilado: %s</string>
     <string name="ubicacion_inmueble">Ubicación: %s</string>
+    <string name="codigoPostal_inmueble">Código Postal: %1$s</string>
     <string name="escritura_inmueble">Escritura: %s</string>
     <string name="imagen_inmueble">Imagen: %s</string>
     <string name="usuario_inmueble">Usuario: %s</string>
@@ -25,6 +26,7 @@
     <string name="hint_alquilado">Alquilado</string>
     <string name="hint_ubicacion">Ubicación</string>
     <string name="hint_documento">Documento</string>
+    <string name="hint_codigo_postal">Código Postal</string>
     <string name="hint_imagen">Imagen</string>
     <string name="hint_usuario">Usuario</string>
     <string name="button_guardar">Guardar</string>
@@ -35,6 +37,7 @@
     <string name="hint_email">Correo electrónico</string>
     <string name="document_loaded">Documento cargado: %1$s</string>
     <string name="image_loaded">Imagen cargada: %1$s</string>
+    <string name="codigo_postal">Código Postal</string>
 
     <string name="error_al_subir_archivo">Error al subir archivo: %1$s</string>
     <string name="error_al_subir_imagen">Error al subir imagen: %1$s</string>
@@ -51,4 +54,16 @@
     <string name="apellidos">Apellidos</string>
     <string name="nombre_apellidos">%1$s %2$s</string>
     <string name="username">Usuario </string>
+
+    <string name="nombre_text">Nombre: %1$s</string>
+    <string name="ciudad_text">Ciudad: %1$s</string>
+    <string name="alquilado_si">Sí</string>
+    <string name="alquilado_no">No</string>
+    <string name="alquilado_text">Alquilado: %1$s</string>
+    <string name="ubicacion_text">Ubicación: %1$s</string>
+    <string name="codigo_postal_text">Código Postal: %1$s</string>
+    <string name="documento_text">Documento: %1$s</string>
+    <string name="imagen_text">Imagen: %1$s</string>
+    <string name="desc_imagen_inmueble">Imagen Inmueble</string>
+
 </resources>

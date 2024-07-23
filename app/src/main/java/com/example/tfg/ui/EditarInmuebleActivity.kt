@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,8 @@ class EditarInmuebleActivity : AppCompatActivity() {
     private lateinit var repository: FirebaseRepository
     private lateinit var auth: FirebaseAuth
     private lateinit var inmueble: Inmueble
+    private lateinit var imageResultLauncher: ActivityResultLauncher<String>
+
 
     private val viewModel: InmuebleViewModel by viewModels {
         InmuebleViewModelFactory(
@@ -44,15 +47,6 @@ class EditarInmuebleActivity : AppCompatActivity() {
             }
         }
 
-    private val imageResultLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUri = uri
-            if (uri != null) {
-                Toast.makeText(this, "Imagen cargada: $uri", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
-            }
-        }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -70,6 +64,13 @@ class EditarInmuebleActivity : AppCompatActivity() {
         repository = FirebaseRepository(this)
         auth = FirebaseAuth.getInstance()
 
+        imageResultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            // Paso 3: Manejar el resultado de la selección de la imagen
+            uri?.let {
+                // Aquí puedes usar la URI de la imagen, por ejemplo, mostrarla en un ImageView
+            }
+        }
+
         // Corrección del identificador para coincidir con el usado al enviar el objeto desde InmuebleDetailActivity
         val inmuebleIntent = intent.getParcelableExtra<Inmueble>("inmueble")
         if (inmuebleIntent != null) {
@@ -82,6 +83,7 @@ class EditarInmuebleActivity : AppCompatActivity() {
         val editTextNombre: EditText = findViewById(R.id.editTextNombre)
         val editTextCiudad: EditText = findViewById(R.id.editTextCiudad)
         val editTextUbicacion: EditText = findViewById(R.id.editTextUbicacion)
+        val editTextCodigoPostal: EditText = findViewById(R.id.editTextCodigoPostal)
         val buttonCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
         val buttonCargarImagen: Button = findViewById(R.id.btnCargarImagen)
         val buttonActualizarInmueble: Button = findViewById(R.id.boton_guardar)
@@ -89,6 +91,8 @@ class EditarInmuebleActivity : AppCompatActivity() {
         editTextNombre.setText(inmueble.nombre)
         editTextCiudad.setText(inmueble.ciudad)
         editTextUbicacion.setText(inmueble.ubicacion)
+        editTextCodigoPostal.setText(inmueble.codigoPostal)
+
 
         buttonCargarDocumento.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -102,16 +106,10 @@ class EditarInmuebleActivity : AppCompatActivity() {
             }
         }
 
-        buttonCargarImagen.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                imageResultLauncher.launch("image/*")
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+        val btnCargarImagen = findViewById<Button>(R.id.btnCargarImagen)
+        btnCargarImagen.setOnClickListener {
+            // Lanzar la galería
+            imageResultLauncher.launch("image/*")
         }
 
         buttonActualizarInmueble.setOnClickListener {
@@ -124,11 +122,13 @@ class EditarInmuebleActivity : AppCompatActivity() {
         val nombre = findViewById<EditText>(R.id.editTextNombre).text.toString()
         val ciudad = findViewById<EditText>(R.id.editTextCiudad).text.toString()
         val ubicacion = findViewById<EditText>(R.id.editTextUbicacion).text.toString()
+        val codigoPostal = findViewById<EditText>(R.id.editTextCodigoPostal).text.toString()
 
         // Solo agregar al mapa los campos que han sido modificados
         if (nombre.isNotEmpty()) camposActualizados["nombre"] = nombre
         if (ciudad.isNotEmpty()) camposActualizados["ciudad"] = ciudad
         if (ubicacion.isNotEmpty()) camposActualizados["ubicacion"] = ubicacion
+        if (codigoPostal.isNotEmpty()) camposActualizados["codigoPostal"] = codigoPostal
         documentUri?.let { camposActualizados["escritura"] = it.toString() }
 
         if (camposActualizados.isNotEmpty()) {

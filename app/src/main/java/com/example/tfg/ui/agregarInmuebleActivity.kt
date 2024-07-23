@@ -61,14 +61,16 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         Log.d("AgregarInmuebleActivity", "Función botón llamada1")
         repository = FirebaseRepository(this)
 
+
         val btnCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
         btnCargarDocumento.setOnClickListener { _ ->
             documentResultLauncher.launch("*/*")
         }
 
         val btnCargarImagen: Button = findViewById(R.id.btnCargarImagen)
-        btnCargarImagen.setOnClickListener { _ ->
-            imageResultLauncher.launch("image/*")
+        btnCargarImagen.setOnClickListener {
+            // Especifica directamente el tipo MIME para seleccionar imágenes
+            imageResultLauncher.launch("image/*") // Corregido para usar un String directamente
         }
 
         val btnGuardar: Button = findViewById(R.id.btnGuardar)
@@ -127,6 +129,8 @@ class AgregarInmuebleActivity : AppCompatActivity() {
         val ciudad = findViewById<EditText>(R.id.editTextCiudad).text.toString()
         val nombre = findViewById<EditText>(R.id.editTextNombre).text.toString()
         val ubicacion = findViewById<EditText>(R.id.editTextUbicacion).text.toString()
+        val codigoPostal = findViewById<EditText>(R.id.editTextCodigoPostal).text.toString()
+
 
         if (documentUri == null || imageUri == null) {
             Toast.makeText(this, "Documento o imagen no seleccionados", Toast.LENGTH_SHORT).show()
@@ -135,7 +139,7 @@ class AgregarInmuebleActivity : AppCompatActivity() {
 
         subirArchivoAFirebaseStorage(documentUri, { documentUrl ->
             subirArchivoAFirebaseStorage(imageUri, { imageUrl ->
-                val inmueble = Inmueble(alquilado, ciudad, documentUrl, UUID.randomUUID().toString(), imageUrl, nombre, ubicacion, usuarioActual.uid)
+                val inmueble = Inmueble(alquilado, ciudad, documentUrl, UUID.randomUUID().toString(), imageUrl, nombre, ubicacion, usuarioActual.uid, codigoPostal)
                 repository.agregarInmueble(inmueble,
                     onSuccess = {
                         Toast.makeText(this, "Inmueble añadido correctamente", Toast.LENGTH_SHORT).show()

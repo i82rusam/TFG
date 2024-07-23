@@ -52,6 +52,16 @@
             android:layout_marginBottom="16dp"
             android:inputType="textPostalAddress"/>
 
+        <EditText
+            android:id="@+id/editTextCodigoPostal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/hint_codigo_postal"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:inputType="textPostalAddress"/>
+
 
         <Button
             android:id="@+id/btnCargarDocumento"

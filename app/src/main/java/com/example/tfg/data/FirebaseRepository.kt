@@ -214,4 +214,12 @@ class FirebaseRepository(private val context: Context) {
             }
     }
 
+    fun subirArchivoAFirebaseStorage(uri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val ref = firebaseStorage.reference.child("inmuebles/${UUID.randomUUID()}")
+        ref.putFile(uri)
+            .addOnSuccessListener {
+                ref.downloadUrl.addOnSuccessListener { uri -> onSuccess(uri.toString()) }
+            }
+            .addOnFailureListener { e -> onFailure(e) }
+    }
 }

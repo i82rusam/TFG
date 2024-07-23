@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
     id("com.google.gms.google-services")
 }
 
@@ -60,5 +61,6 @@ dependencies {
     implementation ("com.google.android.material:material:<version>")
     implementation ("com.google.firebase:firebase-auth:23.0.0")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
 }

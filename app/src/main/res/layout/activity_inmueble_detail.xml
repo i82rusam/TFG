@@ -40,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/frameLayout"
+        android:layout_marginTop="14dp"
         android:text="Nombre del Inmueble"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -49,6 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewNombre"
+        android:layout_marginTop="21dp"
         android:text="Ciudad" />
 
     <TextView
@@ -56,6 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewCiudad"
+        android:layout_marginTop="19dp"
         android:text="Alquilado" />
 
     <TextView
@@ -63,26 +66,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewAlquilado"
+        android:layout_marginTop="19dp"
         android:text="Ubicación" />
+
+    <TextView
+        android:id="@+id/textViewCodigoPostal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewUbicacion"
+        android:layout_marginTop="19dp"
+        android:text="Código Postal" />
 
     <TextView
         android:id="@+id/textViewDocumento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewUbicacion"
+        android:layout_below="@id/textViewCodigoPostal"
+        android:layout_marginTop="19dp"
         android:text="Documento" />
 
-    <TextView
-        android:id="@+id/textViewImagen"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/imageViewInmueble"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewDocumento"
-        android:text="Imagen" />
+        android:contentDescription="@string/desc_imagen_inmueble"
+        android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/textViewUsuario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewImagen"
-        android:text="Usuario" />
+
 </RelativeLayout>

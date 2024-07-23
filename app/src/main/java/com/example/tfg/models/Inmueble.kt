@@ -11,10 +11,13 @@ data class Inmueble(
     var imagen: String="",
     var nombre: String="",
     var ubicacion: String="",
-    var usuario: String=""
+    var usuario: String="",
+    var codigoPostal: String=""
+
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -33,6 +36,7 @@ data class Inmueble(
         parcel.writeString(nombre)
         parcel.writeString(ubicacion)
         parcel.writeString(usuario)
+        parcel.writeString(codigoPostal)
     }
 
     override fun describeContents(): Int {

@@ -45,21 +45,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Editar Usuario"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/nombreApellidosTextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btnChangePassword"
-            android:layout_marginTop="16dp" />
-
-        <Button
-            android:id="@+id/btnChangePassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/change_password"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/btn_edit_user"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/btnSignOut"
@@ -67,7 +56,7 @@
             android:layout_height="wrap_content"
             android:text="@string/sign_out"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/btnChangePassword"
+            app:layout_constraintTop_toBottomOf="@id/btn_edit_user"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

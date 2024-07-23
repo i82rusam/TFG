@@ -25,22 +25,94 @@
         tools:ignore="TextSizeCheck,VisualLintBounds" />
 
         <EditText
+            android:id="@+id/editTextAlquilado"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/se_encuentra_alquilado"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextNombre"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/ingrese_el_nombre_del_inmueble"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/editTextAlquilado"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
             android:id="@+id/editTextCiudad"
             android:layout_width="match_parent"
-            android:layout_height="49dp"
-            android:layout_above="@id/btnCargarDocumento"
-
+            android:layout_height="48dp"
             android:autofillHints=""
             android:hint="@string/ingrese_la_ciudad"
             android:inputType="text"
-            android:minHeight="48dp"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNombre"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_above="@id/editTextCiudad"
+            android:autofillHints=""
+            android:hint="@string/ingrese_la_ubicacion_del_inmueble"
+            android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextAlquilado"
+            app:layout_constraintTop_toBottomOf="@+id/editTextCiudad"
             app:layout_constraintVertical_bias="0.0"
-            tools:ignore="MissingConstraints,UnknownId" />
+            tools:ignore="MissingConstraints" />
+
+        <EditText
+            android:id="@+id/etCodigoPostal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/codigo_postal"
+            app:layout_constraintTop_toBottomOf="@+id/editTextUbicacion"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <Button
+            android:id="@+id/btnCargarDocumento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etCodigoPostal"
+            android:onClick="cargarDocumento"
+            android:text="@string/cargar_documento"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etCodigoPostal"
+            app:layout_constraintVertical_bias="0.265"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/btnCargarImagen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etCodigoPostal"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="206dp"
+            android:text="@string/cargar_imagen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etCodigoPostal"
+            app:layout_constraintVertical_bias="0.067"
+            tools:ignore="MissingConstraints" />
 
         <Button
             android:id="@+id/btnGuardar"
@@ -55,91 +127,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextUbicacion"
+            app:layout_constraintTop_toBottomOf="@+id/btnCargarImagen"
             app:layout_constraintVertical_bias="1.0"
             tools:ignore="Deprecated,VisualLintBounds" />
-
-        <Button
-            android:id="@+id/btnCargarDocumento"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editTextCiudad"
-            android:onClick="cargarDocumento"
-            android:text="@string/cargar_documento"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.931"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextCiudad"
-            app:layout_constraintVertical_bias="0.132"
-            tools:ignore="MissingConstraints" />
-
-        <EditText
-            android:id="@+id/editTextAlquilado"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_above="@id/btnCargarDocumento"
-            android:layout_marginEnd="18dp"
-            android:autofillHints=""
-            android:hint="@string/se_encuentra_alquilado"
-            android:inputType="text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.977"
-            app:layout_constraintStart_toEndOf="@+id/btnCargarDocumento"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintVertical_bias="0.08"
-            tools:ignore="MissingConstraints" />
-
-        <Button
-            android:id="@+id/btnCargarImagen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editTextCiudad"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="206dp"
-            android:text="@string/cargar_imagen"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextCiudad"
-
-            app:layout_constraintVertical_bias="0.067"
-            tools:ignore="MissingConstraints" />
-
-        <EditText
-        android:id="@+id/editTextNombre"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_above="@id/btnCargarDocumento"
-        android:autofillHints=""
-        android:hint="@string/ingrese_el_nombre_del_inmueble"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.482"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCargarImagen"
-        app:layout_constraintVertical_bias="0.054"
-        tools:ignore="MissingConstraints,DuplicateClickableBoundsCheck,VisualLintOverlap" />
-
-        <EditText
-            android:id="@+id/editTextUbicacion"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_above="@id/editTextNombre"
-            android:autofillHints=""
-            android:hint="@string/ingrese_la_ubicacion_del_inmueble"
-            android:inputType="text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnCargarImagen"
-            app:layout_constraintVertical_bias="0.56"
-            tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
