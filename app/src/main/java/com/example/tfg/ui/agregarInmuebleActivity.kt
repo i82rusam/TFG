@@ -1,16 +1,15 @@
 package com.example.tfg.ui
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
@@ -19,24 +18,22 @@ import com.example.tfg.viewmodels.InmuebleViewModel
 import com.example.tfg.viewmodels.InmuebleViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-import java.io.IOException
 import java.util.UUID
 
 class AgregarInmuebleActivity : AppCompatActivity() {
 
     private lateinit var repository: FirebaseRepository
-
+    private lateinit var auth: FirebaseAuth
 
     private val viewModel: InmuebleViewModel by viewModels { InmuebleViewModelFactory(FirebaseRepository(this)) }
 
     private var documentUri: Uri? = null
     private var imageUri: Uri? = null
-    private var inmueble: Inmueble? = null
 
     private val documentResultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         documentUri = uri
         if (uri != null) {
-            Toast.makeText(this, getString(R.string.document_loaded, uri.toString()), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Documento cargado: $uri", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "No se seleccionó ningún documento", Toast.LENGTH_SHORT).show()
         }
@@ -45,139 +42,122 @@ class AgregarInmuebleActivity : AppCompatActivity() {
     private val imageResultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
         if (uri != null) {
-            Toast.makeText(this, getString(R.string.image_loaded, uri.toString()), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Imagen cargada: $uri", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
         }
     }
 
-    //companion object {
-    //    private const val REQUEST_READ_STORAGE = 100
-    //}
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agregar_inmueble)
-        Log.d("AgregarInmuebleActivity", "Función botón llamada1")
+
+        auth = FirebaseAuth.getInstance()
         repository = FirebaseRepository(this)
 
-
         val btnCargarDocumento: Button = findViewById(R.id.btnCargarDocumento)
-        btnCargarDocumento.setOnClickListener { _ ->
+        btnCargarDocumento.setOnClickListener {
             documentResultLauncher.launch("*/*")
         }
 
         val btnCargarImagen: Button = findViewById(R.id.btnCargarImagen)
         btnCargarImagen.setOnClickListener {
-            // Especifica directamente el tipo MIME para seleccionar imágenes
-            imageResultLauncher.launch("image/*") // Corregido para usar un String directamente
+            imageResultLauncher.launch("image/*")
         }
 
         val btnGuardar: Button = findViewById(R.id.btnGuardar)
-        btnGuardar.setOnClickListener { _ ->
-            Log.d("AgregarInmuebleActivity", "btnGuardar onClickListener llamado")
+        btnGuardar.setOnClickListener {
             guardarInmueble()
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_inmueble_detail, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.btnEliminar -> {
-                inmueble?.let {
-                    eliminarInmueble(it.idInmueble, {
-                        Toast.makeText(this, "Inmueble eliminado correctamente", Toast.LENGTH_SHORT).show()
-                    }, { e ->
-                        Toast.makeText(this, "Error al eliminar el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
-                    })
-                } ?: Toast.makeText(this, "Inmueble no seleccionado o inexistente", Toast.LENGTH_SHORT).show()
-                true
+    private fun guardarInmueble() {
+        val usuarioActual = auth.currentUser
+        if (usuarioActual == null) {
+            AlertDialog.Builder(this).apply {
+                setTitle("Autenticación requerida")
+                setMessage("Debe estar autenticado para agregar un inmueble. ¿Desea iniciar sesión ahora?")
+                setPositiveButton("Iniciar sesión") { dialog, which ->
+                    val intent = Intent(context, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                setNegativeButton("Cancelar", null)
+                show()
             }
-            else -> super.onOptionsItemSelected(item)
+            return
         }
-    }
 
-    fun eliminarInmueble(idInmueble: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        viewModel.eliminarInmueble(idInmueble,
-            onSuccess = {
-                Toast.makeText(this, "Inmueble eliminado correctamente", Toast.LENGTH_SHORT).show()
-                onSuccess()
+        val alquiladoEditText = findViewById<EditText>(R.id.editTextAlquilado)
+        val ciudadEditText = findViewById<EditText>(R.id.editTextCiudad)
+        val nombreEditText = findViewById<EditText>(R.id.editTextNombre)
+        val ubicacionEditText = findViewById<EditText>(R.id.editTextUbicacion)
+        val codigoPostalEditText = findViewById<EditText>(R.id.editTextCodigoPostal)
+
+        val alquilado = alquiladoEditText.text.toString().toBoolean()
+        val ciudad = ciudadEditText.text.toString()
+        val nombre = nombreEditText.text.toString()
+        val ubicacion = ubicacionEditText.text.toString()
+        val codigoPostal = codigoPostalEditText.text.toString()
+
+        subirArchivo(documentUri, "documentos/${UUID.randomUUID()}",
+            onSuccess = { documentoUrl ->
+                subirArchivo(imageUri, "imagenes/${UUID.randomUUID()}",
+                    onSuccess = { imagenUrl ->
+                        val inmueble = Inmueble(alquilado, ciudad, documentoUrl, UUID.randomUUID().toString(), imagenUrl, nombre, ubicacion, usuarioActual.displayName ?: usuarioActual.uid, codigoPostal)
+                        repository.agregarInmueble(inmueble, {
+                            Toast.makeText(this, "Inmueble añadido correctamente", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this, TusInmueblesActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }, {
+                            Toast.makeText(this, "Error al añadir el inmueble: ${it.message}", Toast.LENGTH_SHORT).show()
+                        })
+                    },
+                    onFailure = { exception ->
+                        Toast.makeText(this, "Error al subir la imagen: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
+                )
             },
-            onFailure = { e: Exception ->
-                Toast.makeText(this, "Error al eliminar el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
-                onFailure(e)
+            onFailure = { exception ->
+                Toast.makeText(this, "Error al subir el documento: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
         )
     }
-
-    private fun guardarInmueble() {
-        Log.d("AgregarInmuebleActivity", "Función guardarInmueble llamada")
-
-        // Obtiene la instancia actual de FirebaseAuth y el usuario actual
-        val usuarioActual = FirebaseAuth.getInstance().currentUser ?: return
-
-        if (usuarioActual == null) {
-            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+    private fun subirArchivo(uri: Uri?, path: String, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        if (uri == null) {
+            onFailure(Exception("El URI del archivo es nulo"))
             return
         }
-
-        val alquilado = findViewById<EditText>(R.id.editTextAlquilado).text.toString().toIntOrNull() ?: 0
-        val ciudad = findViewById<EditText>(R.id.editTextCiudad).text.toString()
-        val nombre = findViewById<EditText>(R.id.editTextNombre).text.toString()
-        val ubicacion = findViewById<EditText>(R.id.editTextUbicacion).text.toString()
-        val codigoPostal = findViewById<EditText>(R.id.editTextCodigoPostal).text.toString()
-
-
-        if (documentUri == null || imageUri == null) {
-            Toast.makeText(this, "Documento o imagen no seleccionados", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        subirArchivoAFirebaseStorage(documentUri, { documentUrl ->
-            subirArchivoAFirebaseStorage(imageUri, { imageUrl ->
-                val inmueble = Inmueble(alquilado, ciudad, documentUrl, UUID.randomUUID().toString(), imageUrl, nombre, ubicacion, usuarioActual.uid, codigoPostal)
-                repository.agregarInmueble(inmueble,
-                    onSuccess = {
-                        Toast.makeText(this, "Inmueble añadido correctamente", Toast.LENGTH_SHORT).show()
-                        limpiarCamposYRedirigir()
-                    },
-                    onFailure = { e ->
-                        Toast.makeText(this, "Error al añadir el inmueble: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            }, intentos = 3) // Añade el número de intentos aquí
-        }, intentos = 3)
-    }
-    private fun subirArchivoAFirebaseStorage(uri: Uri?, onUrlObtained: (String) -> Unit, intentos: Int = 3) {
-        uri ?: return
-        val storageReference = FirebaseStorage.getInstance().reference.child("inmuebles/${UUID.randomUUID()}")
-        val uploadTask = storageReference.putFile(uri)
-
-        uploadTask.addOnSuccessListener { taskSnapshot ->
-            taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUri ->
-                onUrlObtained(downloadUri.toString())
+        val storageRef = FirebaseStorage.getInstance().reference.child(path)
+        storageRef.putFile(uri)
+            .addOnSuccessListener { taskSnapshot ->
+                taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { downloadUri ->
+                    onSuccess(downloadUri.toString())
+                }?.addOnFailureListener { exception ->
+                    onFailure(exception)
+                }
             }
-        }.addOnFailureListener { e ->
-            if (e is IOException && e.message?.contains("The server has terminated the upload session") == true && intentos > 0) {
-                Log.d("AgregarInmuebleActivity", "Reintentando subida... Intentos restantes: ${intentos - 1}")
-                subirArchivoAFirebaseStorage(uri, onUrlObtained, intentos - 1)
-            } else {
-                Toast.makeText(this, getString(R.string.error_al_subir_archivo, e.message), Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { exception ->
+                onFailure(exception)
             }
-        }
     }
 
-    private fun limpiarCamposYRedirigir() {
-        findViewById<EditText>(R.id.editTextAlquilado).setText("")
-        findViewById<EditText>(R.id.editTextCiudad).setText("")
-        findViewById<EditText>(R.id.editTextNombre).setText("")
-        findViewById<EditText>(R.id.editTextUbicacion).setText("")
-        val intent = Intent(this, TusInmueblesActivity::class.java)
-        startActivity(intent)
-        finish()
+    companion object {
+        private const val REQUEST_READ_STORAGE = 100
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_READ_STORAGE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permiso de lectura concedido", Toast.LENGTH_SHORT).show()
+                    documentResultLauncher.launch("*/*")
+                } else {
+                    Toast.makeText(this, "Permiso de lectura denegado", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
+import com.example.tfg.models.Inmueble
 import com.example.tfg.ui.adapter.InmuebleAdapter
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TusInmueblesActivity : AppCompatActivity() {
 
@@ -102,5 +104,27 @@ class TusInmueblesActivity : AppCompatActivity() {
             Log.d(TAG, "Usuario no autenticado")
         }
 
+    }
+    override fun onStart() {
+        super.onStart()
+        val db = FirebaseFirestore.getInstance()
+        db.collection("inmuebles").get().addOnSuccessListener { result ->
+            val listaInmuebles = ArrayList<Inmueble>()
+            for (document in result) {
+                val inmueble = document.toObject(Inmueble::class.java)
+                listaInmuebles.add(inmueble)
+            }
+            // Asumiendo que tienes un RecyclerView y un adaptador configurado correctamente
+            adapter.setInmuebles(listaInmuebles) // Usa 'adapter' en lugar de 'miAdaptador'
+            adapter.notifyDataSetChanged()
+        }.addOnFailureListener { exception ->
+            Log.d(TAG, "Error al obtener los inmuebles: ", exception)
+        }
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

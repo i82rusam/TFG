@@ -32,15 +32,12 @@
             android:layout_marginBottom="16dp"
             android:inputType="text"/>
 
-        <EditText
-            android:id="@+id/editTextAlquilado"
-            android:layout_width="match_parent"
+        <Switch
+            android:id="@+id/switchAlquilado"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:hint="@string/hint_alquilado"
-            android:inputType="number"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"/>
+            android:minHeight="48dp"
+            android:text="Alquilado" />
 
         <EditText
             android:id="@+id/editTextUbicacion"

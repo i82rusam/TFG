@@ -26,7 +26,7 @@ class InmuebleDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inmueble_detail)
 
-        val inmueble = intent.getParcelableExtra<Inmueble>("inmueble")
+        val inmueble = intent.getParcelableExtra<Inmueble>(EXTRA_INMUEBLE)
 
         val textViewNombre: TextView = findViewById(R.id.textViewNombre)
         val textViewCiudad: TextView = findViewById(R.id.textViewCiudad)
@@ -101,6 +101,5 @@ class InmuebleDetailActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
 
 }

@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Inmueble(
-    var alquilado: Int=0,
+    var alquilado: Boolean = false,
     var ciudad: String="",
     var escritura: String="",
     var idInmueble: String="",
@@ -13,10 +13,11 @@ data class Inmueble(
     var ubicacion: String="",
     var usuario: String="",
     var codigoPostal: String=""
-
 ): Parcelable {
+    constructor() : this(false, "", "", "", "", "", "", "", "")
+
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readByte() != 0.toByte(),
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -28,7 +29,7 @@ data class Inmueble(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(alquilado)
+        parcel.writeByte(if (alquilado) 1 else 0)
         parcel.writeString(ciudad)
         parcel.writeString(escritura)
         parcel.writeString(idInmueble)
