@@ -6,18 +6,21 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tfg.R
 import com.example.tfg.data.FirebaseRepository
-import com.example.tfg.ui.adapter.InmuebleAdapter
+import com.example.tfg.viewmodels.InmuebleViewModel
+import com.example.tfg.viewmodels.InmuebleViewModelFactory
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var adapter: InmuebleAdapter
     private lateinit var repository: FirebaseRepository
     private lateinit var auth: FirebaseAuth
+
+    private val viewModel: InmuebleViewModel by viewModels { InmuebleViewModelFactory(FirebaseRepository(this)) }
 
     companion object {
         private const val TAG = "MainActivity"
@@ -38,24 +41,6 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
-
-        // Inicializa adapter aquí antes de llamar a updateInmuebles
-        adapter = InmuebleAdapter(
-            emptyList(),
-            itemClick = { inmueble ->
-                val intent = Intent(this, InmuebleDetailActivity::class.java)
-                intent.putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE, inmueble)
-                startActivity(intent)
-            },
-            itemDelete = { inmueble ->
-                repository.eliminarInmueble(inmueble.idInmueble, onSuccess = {
-                    Log.d("MainActivity", "Inmueble eliminado con éxito en Firebase")
-                }, onFailure = { e ->
-                    Log.e("MainActivity", "Error al eliminar el inmueble en Firebase", e)
-                    e.printStackTrace()
-                })
-            }
-        )
 
         // Inicializa repository aquí
         repository = FirebaseRepository(this)
@@ -80,32 +65,6 @@ class MainActivity : AppCompatActivity() {
         btnMyInmuebles.setOnClickListener {
             val intent = Intent(this, TusInmueblesActivity::class.java)
             startActivity(intent)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Actualiza la lista de inmuebles cada vez que la actividad se reanuda
-        updateInmuebles()
-    }
-
-    private fun updateInmuebles() {
-        // Obtén los datos actualizados de Firebase
-        val userId = auth.currentUser?.uid
-        if (userId != null) {
-            repository.getInmuebles(
-                userId,
-                onSuccess = { inmuebles ->
-                    adapter.setInmuebles(inmuebles)
-                    // Asegúrate de notificar al adaptador que los datos han cambiado
-                    adapter.notifyDataSetChanged()
-                },
-                onFailure = { e ->
-                    Log.e(TAG, "Error al obtener inmuebles: ", e)
-                }
-            )
-        } else {
-            Log.d(TAG, "Usuario no autenticado")
         }
     }
 }

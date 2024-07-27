@@ -4,20 +4,22 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Inmueble(
-    var alquilado: Boolean = false,
-    var ciudad: String="",
-    var escritura: String="",
-    var idInmueble: String="",
-    var imagen: String="",
-    var nombre: String="",
-    var ubicacion: String="",
-    var usuario: String="",
-    var codigoPostal: String=""
+    val alquilado: Boolean = false,
+    val ciudad: String = "",
+    val escritura: String = "",
+    val idInmueble: String = "",
+    val imagen: String = "",
+    val nombre: String = "",
+    val ubicacion: String = "",
+    val codigoPostal: String = "",
+    val usuario: String = "",
+    val inquilino: String = ""
 ): Parcelable {
     constructor() : this(false, "", "", "", "", "", "", "", "")
 
     constructor(parcel: Parcel) : this(
         parcel.readByte() != 0.toByte(),
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -38,6 +40,7 @@ data class Inmueble(
         parcel.writeString(ubicacion)
         parcel.writeString(usuario)
         parcel.writeString(codigoPostal)
+        parcel.writeString(inquilino)
     }
 
     override fun describeContents(): Int {

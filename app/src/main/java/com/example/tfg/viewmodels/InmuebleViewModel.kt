@@ -16,14 +16,7 @@ class InmuebleViewModel(private val repository: FirebaseRepository) : ViewModel(
     }
 
     fun actualizarInmueble(idInmueble: String, inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        // Convert Inmueble to a Map to update, assuming all fields need to be updated
-        val inmuebleActualizado = mapOf(
-            "nombre" to inmueble.nombre,
-            "ciudad" to inmueble.ciudad,
-            "ubicacion" to inmueble.ubicacion,
-            "escritura" to inmueble.escritura // Make sure this is the correct field name and type
-        )
-        repository.actualizarInmueble(idInmueble, inmuebleActualizado, onSuccess, onFailure)
+        repository.actualizarInmueble(idInmueble, inmueble, onSuccess, onFailure)
     }
 
     fun eliminarInmueble(idInmueble: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {

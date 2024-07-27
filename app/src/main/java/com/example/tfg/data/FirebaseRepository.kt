@@ -1,6 +1,5 @@
 package com.example.tfg.data
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -9,7 +8,6 @@ import com.example.tfg.models.Usuario
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
@@ -20,82 +18,121 @@ class FirebaseRepository(private val context: Context) {
     private val auth = FirebaseAuth.getInstance()
     private val firebaseStorage = FirebaseStorage.getInstance()
 
-
-    fun agregarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("inmuebles").add(inmueble)
-            .addOnSuccessListener {
-                onSuccess()
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
-            }
+    companion object {
+        private const val TAG = "FirebaseRepository"
     }
 
-    fun actualizarInmueble(idInmueble: String, camposActualizados: Map<String, Any>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("inmuebles").document(idInmueble).update(camposActualizados)
-            .addOnSuccessListener {
-                onSuccess()
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
-            }
-    }
 
     fun getInmuebles(userId: String, onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("inmuebles").whereEqualTo("usuario", userId)
+        firestore.collection("inmuebles")
+            .whereEqualTo("userId", userId)
             .get()
-            .addOnSuccessListener { result: QuerySnapshot ->
-                val inmuebles = result.toObjects(Inmueble::class.java)
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    Log.d(TAG, "No inmuebles found for userId: $userId")
+                } else {
+                    Log.d(TAG, "Inmuebles found: ${result.size()}")
+                }
+                val inmuebles = result.map { document ->
+                    Log.d(TAG, "Inmueble data: ${document.data}")
+                    document.toObject(Inmueble::class.java)
+                }
                 onSuccess(inmuebles)
             }
             .addOnFailureListener { exception ->
+                Log.e(TAG, "Error fetching inmuebles for userId: $userId", exception)
                 onFailure(exception)
             }
     }
 
-    fun eliminarInmueble(idInmueble: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("inmuebles").document(idInmueble).delete()
-            .addOnSuccessListener {
+    fun getInmueble(id: String, onSuccess: (Inmueble) -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("inmuebles").document(id)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val inmueble = document.toObject(Inmueble::class.java)
+                    if (inmueble != null) {
+                        onSuccess(inmueble)
+                    } else {
+                        onFailure(Exception("Inmueble is null"))
+                    }
+                } else {
+                    onFailure(Exception("No such document"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error fetching inmueble with ID: $id", exception)
+                onFailure(exception)
+            }
+    }
+
+    fun getUsers(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("users")
+            .get()
+            .addOnSuccessListener { result ->
+                val users = result.map { document ->
+                    document.getString("username") ?: ""
+                }
+                onSuccess(users)
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error fetching users", exception)
+                onFailure(exception)
+            }
+    }
+
+    fun eliminarInmueble(inmuebleId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("inmuebles").document(inmuebleId)
+            .delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
+    fun actualizarInmueble(idInmueble: String, inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val documentoRef = firestore.collection("inmuebles").document(idInmueble)
+        documentoRef.set(inmueble)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onFailure(e) }
+    }
+
+    fun agregarInmueble(inmueble: Inmueble, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("inmuebles")
+            .add(inmueble)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "Inmueble added with ID: ${documentReference.id}")
                 onSuccess()
             }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error adding inmueble", e)
+                onFailure(e)
+            }
+    }
+
+    fun fetchInmueblesFromFirebase(onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("inmuebles")
+            .get()
+            .addOnSuccessListener { result ->
+                val inmuebles = result.map { document ->
+                    document.toObject(Inmueble::class.java)
+                }
+                onSuccess(inmuebles)
+            }
             .addOnFailureListener { exception ->
+                Log.w("FirebaseRepository", "Error getting documents: ", exception)
                 onFailure(exception)
             }
     }
 
-    fun verificarExistenciaDelInmueble(idInmueble: String, existe: (Boolean) -> Unit, fallo: (Exception) -> Unit) {
-        val documentoRef = FirebaseFirestore.getInstance().collection("inmuebles").document(idInmueble)
-        documentoRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                existe(documentSnapshot.exists())
+    fun subirImagen(uri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val ref = firebaseStorage.reference.child("inmuebles/${UUID.randomUUID()}")
+        ref.putFile(uri)
+            .addOnSuccessListener {
+                ref.downloadUrl.addOnSuccessListener { uri -> onSuccess(uri.toString()) }
             }
-            .addOnFailureListener { exception ->
-                fallo(exception)
-            }
+            .addOnFailureListener { e -> onFailure(e) }
     }
 
-    fun verificarYActualizarInmueble(idInmueble: String, camposActualizados: Map<String, Any>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        val documentoRef = FirebaseFirestore.getInstance().collection("inmuebles").document(idInmueble)
-        documentoRef.get().addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                documentoRef.update(camposActualizados)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "Inmueble actualizado con éxito")
-                        onSuccess()
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(TAG, "Error al actualizar inmueble", e)
-                        onFailure(e)
-                    }
-            } else {
-                Log.e(TAG, "El inmueble con ID $idInmueble no existe en Firestore.")
-                onFailure(Exception("El inmueble con ID $idInmueble no existe en Firestore."))
-            }
-        }.addOnFailureListener { exception ->
-            Log.e(TAG, "Error al verificar la existencia del inmueble", exception)
-            onFailure(exception)
-        }
-    }
+
 
     fun registrarUsuario(usuario: Usuario, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         auth.createUserWithEmailAndPassword(usuario.email, usuario.password)

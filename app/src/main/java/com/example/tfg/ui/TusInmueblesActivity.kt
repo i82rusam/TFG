@@ -1,6 +1,5 @@
 package com.example.tfg.ui
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,119 +11,80 @@ import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
 import com.example.tfg.ui.adapter.InmuebleAdapter
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class TusInmueblesActivity : AppCompatActivity() {
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: InmuebleAdapter
     private lateinit var repository: FirebaseRepository
+    private lateinit var auth: FirebaseAuth
+
+    companion object {
+        private const val TAG = "TusInmueblesActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tus_inmuebles)
 
-        // Configurar el Toolbar
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        auth = FirebaseAuth.getInstance()
 
+        if (auth.currentUser == null) {
+            val intent = Intent(this, InicioActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
 
-        // Inicializar RecyclerView
-        recyclerView = findViewById(R.id.recyclerViewInmuebles)
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerViewInmuebles)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // Inicializar el repositorio de Firebase
-        repository = FirebaseRepository(this)
-
-        // Inicializar el adaptador con una lista vacía
-        adapter = InmuebleAdapter(emptyList(),
-            itemClick = { inmueble ->
+        adapter = InmuebleAdapter(
+            emptyList(),
+            itemClick = { inmueble: Inmueble ->
                 val intent = Intent(this, InmuebleDetailActivity::class.java)
-                intent.putExtra("inmueble", inmueble)
+                intent.putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE_ID, inmueble.idInmueble)
                 startActivity(intent)
             },
-            itemDelete = { inmueble ->
-                repository.eliminarInmueble(inmueble.idInmueble,
-                    onSuccess = {
-                        // Aquí puedes poner el código que se ejecutará cuando se haya borrado el inmueble con éxito
-                        // Por ejemplo, puedes volver a obtener la lista de inmuebles y actualizar el RecyclerView
-                        val userId = FirebaseAuth.getInstance().currentUser?.uid
-                        if (userId != null) {
-                            repository.getInmuebles(
-                                userId, // Pasa el userId como argumento
-                                onSuccess = { inmuebles ->
-                                    adapter.setInmuebles(inmuebles)
-                                },
-                                onFailure = { e ->
-                                    // Manejar el error
-                                    e.printStackTrace()
-                                }
-                            )
-                        } else {
-                            Log.d(TAG, "Usuario no autenticado")
-                        }
-                    },
-                    onFailure = { e ->
-                        // Manejar el error
-                        e.printStackTrace()
-                    }
-                )
+            itemEdit = { inmueble: Inmueble ->
+                val intent = Intent(this, EditarInmuebleActivity::class.java)
+                intent.putExtra("INMUEBLE_ID", inmueble.idInmueble)
+                startActivity(intent)
+            },
+            itemDelete = { inmueble: Inmueble ->
+                repository.eliminarInmueble(inmueble.idInmueble, onSuccess = {
+                    Log.d(TAG, "Inmueble eliminado con éxito en Firebase")
+                }, onFailure = { e ->
+                    Log.e(TAG, "Error al eliminar el inmueble en Firebase", e)
+                    e.printStackTrace()
+                })
             }
         )
         recyclerView.adapter = adapter
-        // Inicializar el repositorio de Firebase
-        repository = FirebaseRepository(this)
 
-        updateData()
+        repository = FirebaseRepository(this)
     }
+
     override fun onResume() {
         super.onResume()
-
-        // Actualiza los datos cada vez que la actividad se reanuda
-        updateData()
+        updateInmuebles()
     }
 
-    private fun updateData() {
-        // Obtén los datos actualizados de Firebase
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private fun updateInmuebles() {
+        val userId = auth.currentUser?.uid
         if (userId != null) {
+            Log.d(TAG, "Usuario autenticado con ID: $userId")
             repository.getInmuebles(
                 userId,
-                onSuccess = { inmuebles ->
-                    runOnUiThread {
-                        adapter.setInmuebles(inmuebles)
-                        adapter.notifyDataSetChanged()
-                    }
+                onSuccess = { inmuebles: List<Inmueble> ->
+                    Log.d(TAG, "Inmuebles obtenidos: ${inmuebles.size}")
+                    adapter.setInmuebles(inmuebles)
+                    adapter.notifyDataSetChanged()
                 },
-                onFailure = { exception ->
-                    Log.e(TAG, "Error fetching inmuebles for user $userId", exception)
+                onFailure = { e: Exception ->
+                    Log.e(TAG, "Error al obtener inmuebles: ", e)
                 }
             )
         } else {
             Log.d(TAG, "Usuario no autenticado")
         }
-
-    }
-    override fun onStart() {
-        super.onStart()
-        val db = FirebaseFirestore.getInstance()
-        db.collection("inmuebles").get().addOnSuccessListener { result ->
-            val listaInmuebles = ArrayList<Inmueble>()
-            for (document in result) {
-                val inmueble = document.toObject(Inmueble::class.java)
-                listaInmuebles.add(inmueble)
-            }
-            // Asumiendo que tienes un RecyclerView y un adaptador configurado correctamente
-            adapter.setInmuebles(listaInmuebles) // Usa 'adapter' en lugar de 'miAdaptador'
-            adapter.notifyDataSetChanged()
-        }.addOnFailureListener { exception ->
-            Log.d(TAG, "Error al obtener los inmuebles: ", exception)
-        }
-    }
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }

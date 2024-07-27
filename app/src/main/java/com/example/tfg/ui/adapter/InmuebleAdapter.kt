@@ -4,7 +4,6 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tfg.R
@@ -14,67 +13,47 @@ import com.example.tfg.ui.InmuebleDetailActivity
 class InmuebleAdapter(
     private var inmuebles: List<Inmueble>,
     private val itemClick: (Inmueble) -> Unit,
+    private val itemEdit: (Inmueble) -> Unit,
     private val itemDelete: (Inmueble) -> Unit
-) : RecyclerView.Adapter<InmuebleAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<InmuebleAdapter.InmuebleViewHolder>() {
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textViewNombre: TextView = view.findViewById(R.id.textViewNombre)
-        val textViewCiudad: TextView = view.findViewById(R.id.textViewCiudad)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InmuebleViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_inmueble, parent, false)
+        return InmuebleViewHolder(view)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_inmueble, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: InmuebleViewHolder, position: Int) {
         val inmueble = inmuebles[position]
-        holder.textViewNombre.text = inmueble.nombre
-        holder.textViewCiudad.text = inmueble.ciudad
-        holder.itemView.setOnClickListener {
-            itemClick(inmueble)
-            val intent = Intent(holder.itemView.context, InmuebleDetailActivity::class.java)
-            intent.putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE, inmueble)
-            holder.itemView.context.startActivity(intent)
-        }
-        holder.itemView.setOnLongClickListener { view ->
-            val popup = PopupMenu(holder.itemView.context, view)
-            popup.menuInflater.inflate(R.menu.menu_inmueble_detail, popup.menu)
-            popup.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.btnEliminar -> {
-                        itemDelete(inmueble)
-                        true
-                    }
-                    else -> false
-                }
-            }
-            popup.show()
-            true
-        }
+        holder.bind(inmueble, itemClick, itemEdit, itemDelete)
     }
 
-    override fun getItemCount() = inmuebles.size
+    override fun getItemCount(): Int = inmuebles.size
 
-    fun setInmuebles(newInmuebles: List<Inmueble>) {
-        val oldSize = inmuebles.size
-        val newSize = newInmuebles.size
-
-        inmuebles = newInmuebles
-
-        if (oldSize == newSize) {
-            notifyItemRangeChanged(0, oldSize)
-        } else if (oldSize < newSize) {
-            notifyItemRangeChanged(0, oldSize)
-            notifyItemRangeInserted(oldSize, newSize - oldSize)
-        } else {
-            notifyItemRangeChanged(0, newSize)
-            notifyItemRangeRemoved(newSize, oldSize - newSize)
-        }
-    }
-    fun updateData(newInmuebles: List<Inmueble>) {
-        this.inmuebles = newInmuebles
+    fun setInmuebles(inmuebles: List<Inmueble>) {
+        this.inmuebles = inmuebles
         notifyDataSetChanged()
+    }
+
+    class InmuebleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val nombreTextView: TextView = itemView.findViewById(R.id.textViewNombre)
+        private val ciudadTextView: TextView = itemView.findViewById(R.id.textViewCiudad)
+
+        fun bind(
+            inmueble: Inmueble,
+            itemClick: (Inmueble) -> Unit,
+            itemEdit: (Inmueble) -> Unit,
+            itemDelete: (Inmueble) -> Unit
+        ) {
+            nombreTextView.text = inmueble.nombre
+            ciudadTextView.text = inmueble.ciudad
+
+            itemView.setOnClickListener {
+                val context = itemView.context
+                val intent = Intent(context, InmuebleDetailActivity::class.java).apply {
+                    putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE_ID, inmueble.idInmueble)
+                }
+                context.startActivity(intent)
+            }
+        }
     }
 }
