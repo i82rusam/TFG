@@ -8,51 +8,49 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.tfg.R
+import com.example.tfg.data.FirebaseRepository
 import com.example.tfg.models.Inmueble
-import com.google.firebase.firestore.FirebaseFirestore
 
 class InmuebleDetailActivity : AppCompatActivity() {
 
-    companion object {
-        const val EXTRA_INMUEBLE_ID = "com.example.tfg.EXTRA_INMUEBLE_ID"
-        const val EXTRA_INMUEBLE = "com.example.tfg.EXTRA_INMUEBLE"
-    }
+    private lateinit var repository: FirebaseRepository
 
-    private val firestore = FirebaseFirestore.getInstance()
+    companion object {
+        const val EXTRA_INMUEBLE_ID = "EXTRA_INMUEBLE_ID"
+        private const val TAG = "InmuebleDetailActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inmueble_detail)
 
-        val inmuebleId = intent.getStringExtra(EXTRA_INMUEBLE_ID)
-        if (inmuebleId != null) {
-            fetchInmuebleDetails(inmuebleId)
+        repository = FirebaseRepository(this)
+
+        val idInmueble = intent.getStringExtra(EXTRA_INMUEBLE_ID)
+        Log.d(TAG, "Received idInmueble: $idInmueble")
+        if (idInmueble != null) {
+            fetchInmuebleDetails(idInmueble)
         } else {
             Toast.makeText(this, "Inmueble ID is missing", Toast.LENGTH_SHORT).show()
             finish()
         }
     }
 
-    private fun fetchInmuebleDetails(inmuebleId: String) {
-        firestore.collection("inmuebles").document(inmuebleId).get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val inmueble = document.toObject(Inmueble::class.java)
-                    if (inmueble != null) {
-                        displayInmuebleDetails(inmueble)
-                    } else {
-                        Log.e("InmuebleDetailActivity", "Inmueble is null")
-                    }
-                } else {
-                    Log.e("InmuebleDetailActivity", "No such document")
-                }
+    private fun fetchInmuebleDetails(idInmueble: String) {
+        repository.getInmueble(idInmueble,
+            onSuccess = { inmueble ->
+                displayInmuebleDetails(inmueble)
+            },
+            onFailure = { e ->
+                Log.e(TAG, "Error fetching inmueble details", e)
+                Toast.makeText(this, "Error fetching inmueble details: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { exception ->
-                Log.e("InmuebleDetailActivity", "Error fetching inmueble details", exception)
-            }
+        )
     }
 
     private fun displayInmuebleDetails(inmueble: Inmueble) {
+        Log.d(TAG, "Displaying details for inmueble: ${inmueble.idInmueble}")
+
         val textViewNombre: TextView = findViewById(R.id.textViewNombre)
         val textViewCiudad: TextView = findViewById(R.id.textViewCiudad)
         val textViewAlquilado: TextView = findViewById(R.id.textViewAlquilado)
@@ -72,6 +70,8 @@ class InmuebleDetailActivity : AppCompatActivity() {
             Glide.with(this)
                 .load(imageUrl)
                 .into(imageViewInmueble)
+        } ?: run {
+            imageViewInmueble.setImageResource(R.drawable.ic_profile)
         }
     }
 }

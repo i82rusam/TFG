@@ -23,13 +23,15 @@ class FirebaseRepository(private val context: Context) {
     }
 
 
-    fun getInmuebles(userId: String, onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
+    fun getInmuebles(usuario: String, onSuccess: (List<Inmueble>) -> Unit, onFailure: (Exception) -> Unit) {
+        Log.d(TAG, "Fetching inmuebles for usuario: $usuario")
         firestore.collection("inmuebles")
-            .whereEqualTo("userId", userId)
+            .whereEqualTo("usuario", usuario)
             .get()
             .addOnSuccessListener { result ->
+                Log.d(TAG, "Query successful")
                 if (result.isEmpty) {
-                    Log.d(TAG, "No inmuebles found for userId: $userId")
+                    Log.d(TAG, "No inmuebles found for usuario: $usuario")
                 } else {
                     Log.d(TAG, "Inmuebles found: ${result.size()}")
                 }
@@ -40,28 +42,48 @@ class FirebaseRepository(private val context: Context) {
                 onSuccess(inmuebles)
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching inmuebles for userId: $userId", exception)
+                Log.e(TAG, "Error fetching inmuebles for usuario: $usuario", exception)
                 onFailure(exception)
             }
     }
 
-    fun getInmueble(id: String, onSuccess: (Inmueble) -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("inmuebles").document(id)
-            .get()
+    fun getInmueble(idInmueble: String, onSuccess: (Inmueble) -> Unit, onFailure: (Exception) -> Unit) {
+        Log.d(TAG, "Fetching inmueble with ID: $idInmueble")
+        firestore.collection("inmuebles").document(idInmueble).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
+                    Log.d(TAG, "Inmueble found: ${document.data}")
                     val inmueble = document.toObject(Inmueble::class.java)
                     if (inmueble != null) {
-                        onSuccess(inmueble)
+                        val nestedDocumentId = inmueble.idInmueble
+                        if (nestedDocumentId != null) {
+                            firestore.collection("nestedCollection").document(nestedDocumentId).get()
+                                .addOnSuccessListener { nestedDocument ->
+                                    if (nestedDocument.exists()) {
+                                        Log.d(TAG, "Nested document found: ${nestedDocument.data}")
+                                        onSuccess(inmueble)
+                                    } else {
+                                        Log.e(TAG, "No such nested document with ID: $nestedDocumentId")
+                                        onFailure(Exception("No such nested document"))
+                                    }
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.e(TAG, "Error fetching nested document details", exception)
+                                    onFailure(exception)
+                                }
+                        } else {
+                            onSuccess(inmueble)
+                        }
                     } else {
-                        onFailure(Exception("Inmueble is null"))
+                        onFailure(Exception("Failed to convert document to Inmueble"))
                     }
                 } else {
+                    Log.e(TAG, "No such document with ID: $idInmueble")
                     onFailure(Exception("No such document"))
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching inmueble with ID: $id", exception)
+                Log.e(TAG, "Error fetching inmueble details", exception)
                 onFailure(exception)
             }
     }

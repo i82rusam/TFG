@@ -14,9 +14,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 class TusInmueblesActivity : AppCompatActivity() {
 
-    private lateinit var adapter: InmuebleAdapter
-    private lateinit var repository: FirebaseRepository
     private lateinit var auth: FirebaseAuth
+    private lateinit var repository: FirebaseRepository
+    private lateinit var adapter: InmuebleAdapter
 
     companion object {
         private const val TAG = "TusInmueblesActivity"
@@ -27,6 +27,7 @@ class TusInmueblesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tus_inmuebles)
 
         auth = FirebaseAuth.getInstance()
+        repository = FirebaseRepository(this)
 
         if (auth.currentUser == null) {
             val intent = Intent(this, InicioActivity::class.java)
@@ -35,13 +36,24 @@ class TusInmueblesActivity : AppCompatActivity() {
             return
         }
 
+        setupRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume called")
+        updateInmuebles()
+    }
+
+    private fun setupRecyclerView() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewInmuebles)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = InmuebleAdapter(
-            emptyList(),
-            itemClick = { inmueble: Inmueble ->
+            inmuebles = listOf(),
+            itemClick = { inmueble ->
                 val intent = Intent(this, InmuebleDetailActivity::class.java)
                 intent.putExtra(InmuebleDetailActivity.EXTRA_INMUEBLE_ID, inmueble.idInmueble)
+                Log.d(TAG, "Passing idInmueble: ${inmueble.idInmueble} to InmuebleDetailActivity")
                 startActivity(intent)
             },
             itemEdit = { inmueble: Inmueble ->
@@ -59,21 +71,15 @@ class TusInmueblesActivity : AppCompatActivity() {
             }
         )
         recyclerView.adapter = adapter
-
-        repository = FirebaseRepository(this)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateInmuebles()
     }
 
     private fun updateInmuebles() {
-        val userId = auth.currentUser?.uid
-        if (userId != null) {
-            Log.d(TAG, "Usuario autenticado con ID: $userId")
+        Log.d(TAG, "updateInmuebles called")
+        val usuario = auth.currentUser?.uid
+        if (usuario != null) {
+            Log.d(TAG, "Usuario autenticado con ID: $usuario")
             repository.getInmuebles(
-                userId,
+                usuario,
                 onSuccess = { inmuebles: List<Inmueble> ->
                     Log.d(TAG, "Inmuebles obtenidos: ${inmuebles.size}")
                     adapter.setInmuebles(inmuebles)
@@ -86,5 +92,6 @@ class TusInmueblesActivity : AppCompatActivity() {
         } else {
             Log.d(TAG, "Usuario no autenticado")
         }
+        Log.d(TAG, "updateInmuebles finished")
     }
 }
